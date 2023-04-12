@@ -32,6 +32,9 @@ from bins.logs import logs as logs_program
 from bins.path import path as path_program
 from bins.void import void as void_program
 
+sys.path.append(Path(__file__).parent.parent.__str__())
+import mdls.gerdoolib as gerdoolib
+
 
 def find_prg(program: str) -> bool|Path|typing.Callable:
     """
@@ -83,4 +86,35 @@ def execute(program: str, args: list=None) -> None:
     :return: None
     """
 
-    pass
+    # Create user's command in form of a list:
+    command: list = [program, *args]
+
+    # Find Program to execute:
+    executable_program: bool|Path|typing.Callable = find_prg(program=program)
+
+    if isinstance(executable_program, typing.Callable):
+        # Execute built-in programs:
+        executable_program(command)
+
+    elif isinstance(executable_program, Path):
+        # Reading Program Information File (PIF):
+        pif: bool|dict = read_pif(pif_path=Path(executable_program, f'{program}.json'))
+
+        if isinstance(pif, dict):
+            try:
+                if pif['source'] == f'{program}.py':
+                    out_path: Path = Path(executable_program, pif['execute'])
+                    os.system(f"{sys.executable} {out_path.__str__()} {' '.join(command[1:])}")
+                else:
+                    gerdoolib.msg_out(nature='error',
+                                      message=f'Error: Unfortunately, this program is not supported -> ({program})')
+
+            except KeyError:
+                gerdoolib.msg_out(nature='error', message='Error: Program Information File is broken!')
+        else:
+            if any(True for char in './' if char in program):
+                gerdoolib.msg_out(nature='error', message=f'Error: Program not found -> ({program})')
+            else:
+                gerdoolib.msg_out(nature='error', message=f'Error: Program Information File not found!')
+    else:
+        gerdoolib.msg_out(nature='error', message=f'Error: Program not found -> ({program})')
