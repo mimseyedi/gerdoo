@@ -24,6 +24,26 @@ import json
 from pathlib import Path
 
 
+def find_prg(program: str) -> bool|Path:
+    """
+    The task of this function is to find programs and return their path.
+
+    :param program: Programs name in string format.
+    :return: False|Path
+    """
+
+    # Built-in prgoram path:
+    bins: Path = Path(Path(__file__).parent, 'bins/', program)
+
+    # Standard program path:
+    stnd: Path = Path(Path(__file__).parent.parent, 'prgs/stnd/', program)
+
+    # External program path:
+    extn: Path = Path(Path(__file__).parent.parent, 'prgs/extn/', program)
+
+    return bins if bins.exists() else (stnd if stnd.exists() else (extn if extn.exists() else False))
+
+
 def read_pif(pif_path: str|Path) -> bool|dict:
     """
     This function reads the required information of each program from the
@@ -31,17 +51,6 @@ def read_pif(pif_path: str|Path) -> bool|dict:
 
     :param pif_path: The path of the PIF.
     :return: False|dict
-    """
-
-    pass
-
-
-def find_prg(program: str) -> bool|Path:
-    """
-    The task of this function is to find programs and return their path.
-
-    :param program: Programs name in string format.
-    :return: False|Path
     """
 
     pass
