@@ -18,6 +18,10 @@ Fore more information: https://github.com/mimseyedi/gerdoo#gerdoolib
 """
 
 
+import json
+from pathlib import Path
+
+
 def msg_out(nature: str, message: str) -> None:
     """
     The task of this function is to display the message in the format and style of gerdooo.
@@ -48,3 +52,26 @@ def msg_out(nature: str, message: str) -> None:
             print(f"{SUCCESS}{message}{RESET}")
         case 'warning':
             print(f"{WARNING}{message}{RESET}")
+
+
+def get_version(pif_path: str|Path) -> None:
+    """
+    The task of this function is to display the version of programs.
+
+    :param pif_path: The path of the PIF.
+    :return: None
+    """
+
+    if not isinstance(pif_path, (str, Path)):
+        raise TypeError("pif_path argument must be in the form of a str or pathlib.Path.")
+
+    pif_path: Path = Path(pif_path) if isinstance(pif_path, str) else pif_path
+
+    if pif_path.exists() and len(pif_path.read_text()) > 0:
+        with open(pif_path, 'r') as pif:
+            try:
+                msg_out(nature='standard', message=json.load(pif)['version'])
+            except KeyError:
+                msg_out(nature='error', message='Error: Program Information File is broken!')
+    else:
+        msg_out(nature='error', message=f'Error: Program Information File not found!')
