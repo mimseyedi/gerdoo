@@ -73,7 +73,7 @@ def read_pif(pif_path: str|Path) -> bool|dict:
 
     pif_path: Path = Path(pif_path) if isinstance(pif_path, str) else pif_path
 
-    return json.loads(pif_path.read_text(encoding='utf-8')) if pif_path.exists() else False
+    return json.loads(pif_path.read_text(encoding='utf-8')) if pif_path.exists() and len(pif_path.read_text()) > 0 else False
 
 
 def execute(program: str, args: list=None) -> None:
