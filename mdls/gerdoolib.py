@@ -75,3 +75,26 @@ def get_version(pif_path: str|Path) -> None:
                 msg_out(nature='error', message='Error: Program Information File is broken!')
     else:
         msg_out(nature='error', message=f'Error: Program Information File not found!')
+
+
+def get_description(pif_path: str|Path) -> bool|str:
+    """
+    The task of this function is to display the program description in help (--help) option.
+
+    :param pif_path: The path of the PIF.
+    :return: str
+    """
+
+    if not isinstance(pif_path, (str, Path)):
+        raise TypeError("pif_path argument must be in the form of a str or pathlib.Path.")
+
+    pif_path: Path = Path(pif_path) if isinstance(pif_path, str) else pif_path
+
+    if pif_path.exists() and len(pif_path.read_text()) > 0:
+        with open(pif_path, 'r') as pif:
+            try:
+                return json.load(pif)['description']
+            except KeyError: ...
+            except json.JSONDecodeError: ...
+
+    return False
