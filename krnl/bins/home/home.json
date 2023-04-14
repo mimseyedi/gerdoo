@@ -1,0 +1,7 @@
+{
+  "author": "mimseyedi",
+  "version": "1.0.0",
+  "description": "The task of this program is to transfer you to your home directory.",
+  "source": "kernel.py",
+  "execute": "kernel.py"
+}
