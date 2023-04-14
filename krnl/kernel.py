@@ -24,16 +24,16 @@ import json
 import typing
 from pathlib import Path
 
-from bins.back import back as back_program
-from bins.bash import bash as bash_program
-from bins.goto import goto as goto_program
-from bins.home import home as home_program
-from bins.logs import logs as logs_program
-from bins.path import path as path_program
-from bins.void import void as void_program
-
 sys.path.append(Path(__file__).parent.parent.__str__())
 import mdls.gerdoolib as gerdoolib
+
+from krnl.bins.back import back as back_program
+from krnl.bins.bash import bash as bash_program
+from krnl.bins.goto import goto as goto_program
+from krnl.bins.home import home as home_program
+from krnl.bins.logs import logs as logs_program
+from krnl.bins.path import path as path_program
+from krnl.bins.void import void as void_program
 
 
 def find_prg(program: str) -> bool|Path|typing.Callable:
@@ -87,7 +87,7 @@ def execute(program: str, args: list=None) -> None:
     """
 
     # Create user's command in form of a list:
-    command: list = [program, *args]
+    command: list = [program, *args] if args is not None else [program]
 
     # Find Program to execute:
     executable_program: bool|Path|typing.Callable = find_prg(program=program)
