@@ -1,0 +1,7 @@
+{
+  "author": "mimseyedi",
+  "version": "1.0.0",
+  "description": "This program takes you to the previous directory of the current path.",
+  "source": "kernel.py",
+  "execute": "kernel.py"
+}
