@@ -1,0 +1,7 @@
+{
+  "author": "mimseyedi",
+  "version": "1.0.0",
+  "description": "This program allows you to execute bash commands.",
+  "source": "kernel.py",
+  "execute": "kernel.py"
+}
