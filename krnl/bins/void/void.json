@@ -1,0 +1,7 @@
+{
+  "author": "mimseyedi",
+  "version": "1.0.0",
+  "description": "With the help of this program, you will exit gerdoo.",
+  "source": "kernel.py",
+  "execute": "kernel.py"
+}
