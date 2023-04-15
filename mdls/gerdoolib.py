@@ -117,3 +117,34 @@ def str_to_sha256(string: str) -> str:
     algorithm= hashlib.sha256()
     algorithm.update(string.encode("UTF-8"))
     return algorithm.hexdigest()
+
+
+def authentication(tkn_pass: str, pass_file: str|Path) -> bool:
+    """
+    The task of this function is user authentication.
+
+    :param tkn_pass: Password taken from the user.
+    :param pass_file: User's passwords file.
+    :return: bool
+    """
+
+    if not isinstance(tkn_pass, str):
+        raise TypeError("tkn_pass argument must be in the form of a str.")
+
+    if not isinstance(pass_file, (str, Path)):
+        raise TypeError("pass_file argument must be in the form of a str or pathlib.Path.")
+
+    pass_file: Path = Path(pass_file) if isinstance(pass_file, str) else pass_file
+
+    if not pass_file.exists() or not pass_file.is_file() or pass_file.suffix != '.json':
+        raise FileNotFoundError("The pass_file argument must exist and be a json file.")
+
+    with open(pass_file, 'r') as passwords:
+        try:
+            user_pass = json.load(passwords)['user_pass']
+        except KeyError:
+            raise KeyError("'user_pass' key not found!")
+        except json.JSONDecodeError:
+            raise json.JSONDecodeError(f"'{pass_file}' is broken!", doc=pass_file.__str__(), pos=0)
+
+    return True if str_to_sha256(tkn_pass) == user_pass else False
