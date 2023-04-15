@@ -19,6 +19,7 @@ Fore more information: https://github.com/mimseyedi/gerdoo#gerdoolib
 
 
 import json
+import hashlib
 from pathlib import Path
 
 
@@ -100,3 +101,19 @@ def get_description(pif_path: str|Path) -> bool|str:
             except json.JSONDecodeError: ...
 
     return False
+
+
+def str_to_sha256(string: str) -> str:
+    """
+    This function takes a string as an argument and returns a hashed string with sha256 algorithm.
+
+    :param string: This function takes a string as an argument and returns a hashed string with sha256 algorithm.
+    :return: str
+    """
+
+    if not isinstance(string, str):
+        raise TypeError("string argument must be in the form of a str.")
+
+    algorithm= hashlib.sha256()
+    algorithm.update(string.encode("UTF-8"))
+    return algorithm.hexdigest()
