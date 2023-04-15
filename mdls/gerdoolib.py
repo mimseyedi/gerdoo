@@ -73,6 +73,8 @@ def get_version(pif_path: str|Path) -> None:
                 msg_out(nature='standard', message=json.load(pif)['version'])
             except KeyError:
                 msg_out(nature='error', message='Error: Program Information File is broken!')
+            except json.JSONDecodeError:
+                msg_out(nature='error', message='Error: Program Information File is broken!')
     else:
         msg_out(nature='error', message=f'Error: Program Information File not found!')
 
