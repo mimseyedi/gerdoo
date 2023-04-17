@@ -1,0 +1,9 @@
+{
+  "name": "clear",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program clears the terminal screen.",
+  "executable": "clear.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
