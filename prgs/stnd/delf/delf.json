@@ -1,0 +1,9 @@
+{
+  "name": "delf",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program allows you to delete files.",
+  "executable": "delf.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
