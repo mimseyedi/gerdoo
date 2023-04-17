@@ -1,0 +1,9 @@
+{
+  "name": "newdir",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program allows you to create directories.",
+  "executable": "newdir.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
