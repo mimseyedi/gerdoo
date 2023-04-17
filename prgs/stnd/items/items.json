@@ -1,0 +1,9 @@
+{
+  "name": "items",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program display all items (FILE/DIR) in The working directory.",
+  "executable": "items.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
