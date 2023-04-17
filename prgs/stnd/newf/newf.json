@@ -1,0 +1,9 @@
+{
+  "name": "newf",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program allows you to create files.",
+  "executable": "newf.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
