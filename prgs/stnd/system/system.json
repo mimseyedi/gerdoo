@@ -1,0 +1,9 @@
+{
+  "name": "system",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program display general system information.",
+  "executable": "system.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
