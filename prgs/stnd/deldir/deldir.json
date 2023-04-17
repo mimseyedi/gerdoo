@@ -1,0 +1,9 @@
+{
+  "name": "deldir",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program allows you to delete directories.",
+  "executable": "deldir.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
