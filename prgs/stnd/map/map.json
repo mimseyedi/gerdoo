@@ -1,0 +1,9 @@
+{
+  "name": "map",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program display full path of working directory.",
+  "executable": "map.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
