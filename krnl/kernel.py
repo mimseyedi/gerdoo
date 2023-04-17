@@ -102,8 +102,8 @@ def execute(program: str, args: list=None) -> None:
 
         if isinstance(pif, dict):
             try:
-                if pif['source'] == f'{program}.py':
-                    out_path: Path = Path(executable_program, pif['execute'])
+                if pif['executable'] == f'{program}.py':
+                    out_path: Path = Path(executable_program, pif['executable'])
                     os.system(f"{sys.executable} {out_path.__str__()} {' '.join(command[1:])}")
                 else:
                     gerdoolib.msg_out(nature='error',
