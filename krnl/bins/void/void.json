@@ -1,7 +1,9 @@
 {
-  "author": "mimseyedi",
+  "name": "void",
   "version": "1.0.0",
+  "author": "mimseyedi",
   "description": "With the help of this program, you will exit gerdoo.",
-  "source": "kernel.py",
-  "execute": "kernel.py"
+  "executable": "void.py",
+  "plugins": [],
+  "requirements": ["click"]
 }

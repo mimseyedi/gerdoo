@@ -1,7 +1,9 @@
 {
-  "author": "mimseyedi",
+  "name": "path",
   "version": "1.0.0",
+  "author": "mimseyedi",
   "description": "This program returns the path of other programs.",
-  "source": "kernel.py",
-  "execute": "kernel.py"
+  "executable": "path.py",
+  "plugins": [],
+  "requirements": ["click"]
 }

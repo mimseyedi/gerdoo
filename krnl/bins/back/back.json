@@ -1,7 +1,9 @@
 {
-  "author": "mimseyedi",
+  "name": "back",
   "version": "1.0.0",
+  "author": "mimseyedi",
   "description": "This program takes you to the previous directory of the current path.",
-  "source": "kernel.py",
-  "execute": "kernel.py"
+  "executable": "back.py",
+  "plugins": [],
+  "requirements": ["click"]
 }

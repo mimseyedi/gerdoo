@@ -1,7 +1,9 @@
 {
-  "author": "mimseyedi",
+  "name": "home",
   "version": "1.0.0",
+  "author": "mimseyedi",
   "description": "The task of this program is to transfer you to your home directory.",
-  "source": "kernel.py",
-  "execute": "kernel.py"
+  "executable": "home.py",
+  "plugins": [],
+  "requirements": ["click"]
 }

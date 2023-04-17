@@ -1,7 +1,9 @@
 {
-  "author": "mimseyedi",
+  "name": "bash",
   "version": "1.0.0",
+  "author": "mimseyedi",
   "description": "This program allows you to execute bash commands.",
-  "source": "kernel.py",
-  "execute": "kernel.py"
+  "executable": "bash.py",
+  "plugins": [],
+  "requirements": ["click"]
 }
