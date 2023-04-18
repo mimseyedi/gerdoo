@@ -1,0 +1,9 @@
+{
+  "name": "update",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "The task of this program is to update other programs.",
+  "executable": "update.py",
+  "plugins": [],
+  "requirements": ["click", "requests", "clint"]
+}
