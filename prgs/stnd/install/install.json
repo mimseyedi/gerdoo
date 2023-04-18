@@ -1,0 +1,9 @@
+{
+  "name": "install",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program allows you to download and install other programs from the repository.",
+  "executable": "install.py",
+  "plugins": [],
+  "requirements": ["click", "requests", "clint"]
+}
