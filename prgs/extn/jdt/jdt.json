@@ -1,0 +1,9 @@
+{
+  "name": "jdt",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program provides facilities about the Jalali date and time such as: date conversion and calendar printing",
+  "executable": "jdt.py",
+  "plugins": [],
+  "requirements": ["click", "jaldt"]
+}
