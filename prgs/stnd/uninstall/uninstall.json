@@ -1,0 +1,9 @@
+{
+  "name": "uninstall",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "The task of this program is to remove other programs.",
+  "executable": "uninstall.py",
+  "plugins": [],
+  "requirements": ["click", "requests", "clint"]
+}
