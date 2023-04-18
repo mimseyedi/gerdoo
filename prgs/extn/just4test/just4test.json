@@ -1,0 +1,9 @@
+{
+  "name": "just4test",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "Just4Test for testing update program.",
+  "executable": "just4test.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
