@@ -31,7 +31,6 @@ from krnl.bins.back import back as back_program
 from krnl.bins.bash import bash as bash_program
 from krnl.bins.goto import goto as goto_program
 from krnl.bins.home import home as home_program
-from krnl.bins.logs import logs as logs_program
 from krnl.bins.path import path as path_program
 from krnl.bins.void import void as void_program
 
@@ -49,7 +48,6 @@ def find_prg(program: str) -> bool|Path|typing.Callable:
                   bash_program.bash.__name__: bash_program.bash,
                   goto_program.goto.__name__: goto_program.goto,
                   home_program.home.__name__: home_program.home,
-                  logs_program.logs.__name__: logs_program.logs,
                   path_program.path.__name__: path_program.path,
                   void_program.void.__name__: void_program.void}
 
