@@ -8,7 +8,6 @@ from mdls.gerdoolib import get_description, get_version, msg_out
 
 
 PIF: Path = Path(Path(__file__).parent, 'delf.json')
-sys.argv[0] = sys.argv[0][:-3]
 
 
 def del_file(file_path: str|Path) -> None:
@@ -47,4 +46,5 @@ def main(**kwargs):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0][:-3]
     main()

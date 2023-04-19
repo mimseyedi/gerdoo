@@ -8,7 +8,6 @@ from mdls.gerdoolib import get_description, get_version, msg_out
 
 
 PIF: Path = Path(Path(__file__).parent, 'newf.json')
-sys.argv[0] = sys.argv[0][:-3]
 
 
 def new_file(file_path: str|Path) -> None:
@@ -23,6 +22,7 @@ def new_file(file_path: str|Path) -> None:
 
     if not file_path.exists():
         with open(file_path, 'w') as _: pass
+
         msg_out(nature='success', message=f"The file named '{file_path.name}' was successfully created.")
     else:
         msg_out(nature='error', message=f"Error: A file named '{file_path.name}' already exists in this path: '{file_path.parent}'")
@@ -44,4 +44,5 @@ def main(**kwargs):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0][:-3]
     main()

@@ -9,7 +9,6 @@ from mdls.gerdoolib import get_description, get_version, msg_out
 
 
 PIF: Path = Path(Path(__file__).parent, 'deldir.json')
-sys.argv[0] = sys.argv[0][:-3]
 
 
 def del_directory(dir_path: str|Path, force: bool=False) -> None:
@@ -57,4 +56,5 @@ def main(**kwargs):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0][:-3]
     main()

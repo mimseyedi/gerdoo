@@ -21,9 +21,9 @@ def find_path(program: str) -> None:
 
     bins: Path = Path(Path(__file__).parent.parent, program)
 
-    stnd: Path = Path(Path(__file__).parent.parent.parent.parent, 'prgs/stnd/', program)
+    stnd: Path = Path(Path(__file__).parent.parent.parent.parent, 'prgs', 'stnd', program)
 
-    extn: Path = Path(Path(__file__).parent.parent.parent.parent, 'prgs/extn/', program)
+    extn: Path = Path(Path(__file__).parent.parent.parent.parent, 'prgs', 'extn', program)
 
     response = bins if bins.exists() else (stnd if stnd.exists() else (extn if extn.exists() else False))
 

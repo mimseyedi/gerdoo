@@ -20,7 +20,7 @@ def goto_home(where_opt: bool= False) -> str|None:
     :return: str|None
     """
 
-    path_file_path: Path = Path(Path(__file__).parent.parent.parent.parent, 'setg/PATH.json')
+    path_file_path: Path = Path(Path(__file__).parent.parent.parent.parent, 'setg', 'PATH.json')
 
     if path_file_path.exists() and len(path_file_path.read_text()) > 0:
         with open(path_file_path, 'r') as path:

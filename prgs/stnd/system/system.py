@@ -8,7 +8,6 @@ from mdls.gerdoolib import get_description, get_version, msg_out
 
 
 PIF: Path = Path(Path(__file__).parent, 'system.json')
-sys.argv[0] = sys.argv[0][:-3]
 
 
 def get_system_information(option: str) -> None:
@@ -61,4 +60,5 @@ def main(**kwargs):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0][:-3]
     main()

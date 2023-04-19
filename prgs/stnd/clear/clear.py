@@ -8,7 +8,6 @@ from mdls.gerdoolib import get_description, get_version
 
 
 PIF: Path = Path(Path(__file__).parent, 'clear.json')
-sys.argv[0] = sys.argv[0][:-3]
 
 
 def clear_screen() -> None:
@@ -28,4 +27,5 @@ def main(version):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0][:-3]
     main()

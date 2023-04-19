@@ -9,7 +9,6 @@ from mdls.gerdoolib import get_description, get_version, msg_out, authentication
 
 
 PIF: Path = Path(Path(__file__).parent, 'uninstall.json')
-sys.argv[0] = sys.argv[0][:-3]
 
 
 def find_prg(program: str) -> bool|Path:
@@ -20,11 +19,11 @@ def find_prg(program: str) -> bool|Path:
     :return: bool|Path
     """
 
-    bins: Path = Path(Path(__file__).parent.parent.parent.parent, 'krnl/bins/', program)
+    bins: Path = Path(Path(__file__).parent.parent.parent.parent, 'krnl', 'bins', program)
 
     stnd: Path = Path(Path(__file__).parent.parent, program)
 
-    extn: Path = Path(Path(__file__).parent.parent.parent, 'extn/', program)
+    extn: Path = Path(Path(__file__).parent.parent.parent, 'extn', program)
 
     return bins if bins.exists() else (stnd if stnd.exists() else (extn if extn.exists() else False))
 
@@ -45,7 +44,7 @@ def main(**kwargs):
             if isinstance(prg_status, Path):
                 auth_pass = getpass()
                 if authentication(tkn_pass=auth_pass,
-                                  pass_file=Path(Path(__file__).parent.parent.parent.parent, 'setg/PASS.json')):
+                                  pass_file=Path(Path(__file__).parent.parent.parent.parent, 'setg', 'PASS.json')):
 
                     shutil.rmtree(prg_status)
 
@@ -58,4 +57,5 @@ def main(**kwargs):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0][:-3]
     main()

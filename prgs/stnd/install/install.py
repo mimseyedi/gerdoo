@@ -14,7 +14,6 @@ from mdls.gerdoolib import get_description, get_version, msg_out, authentication
 
 
 PIF: Path = Path(Path(__file__).parent, 'install.json')
-sys.argv[0] = sys.argv[0][:-3]
 
 
 def find_prg(program: str) -> bool:
@@ -25,11 +24,11 @@ def find_prg(program: str) -> bool:
     :return: bool
     """
 
-    bins: Path = Path(Path(__file__).parent.parent.parent.parent, 'krnl/bins/', program)
+    bins: Path = Path(Path(__file__).parent.parent.parent.parent, 'krnl', 'bins', program)
 
     stnd: Path = Path(Path(__file__).parent.parent, program)
 
-    extn: Path = Path(Path(__file__).parent.parent.parent, 'extn/', program)
+    extn: Path = Path(Path(__file__).parent.parent.parent, 'extn', program)
 
     return True if bins.exists() or stnd.exists() or extn.exists() else False
 
@@ -95,11 +94,11 @@ def dl_file(url: str) -> bool:
 
     match prg_type:
         case 'bins':
-            dest: Path = Path(Path(__file__).parent.parent.parent.parent, 'krnl/bins/', Path(url).parent.name)
+            dest: Path = Path(Path(__file__).parent.parent.parent.parent, 'krnl', 'bins', Path(url).parent.name)
         case 'stnd':
             dest: Path = Path(Path(__file__).parent.parent, Path(url).parent.name)
         case 'extn':
-            dest: Path = Path(Path(__file__).parent.parent.parent, 'extn/', Path(url).parent.name)
+            dest: Path = Path(Path(__file__).parent.parent.parent, 'extn', Path(url).parent.name)
         case _:
             return False
 
@@ -184,7 +183,7 @@ def main(**kwargs):
         else:
             auth_pass = getpass()
             if authentication(tkn_pass=auth_pass,
-                              pass_file=Path(Path(__file__).parent.parent.parent.parent, 'setg/PASS.json')):
+                              pass_file=Path(Path(__file__).parent.parent.parent.parent, 'setg', 'PASS.json')):
 
                 if find_prg(program=kwargs['program']):
                     msg_out(nature='error', message=f"Error: The '{kwargs['program']}' program is already installed.")
@@ -234,4 +233,5 @@ def main(**kwargs):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0][:-3]
     main()

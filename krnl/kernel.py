@@ -52,10 +52,10 @@ def find_prg(program: str) -> bool|Path|typing.Callable:
                   void_program.void.__name__: void_program.void}
 
     # Standard program path:
-    stnd: Path = Path(Path(__file__).parent.parent, 'prgs/stnd/', program)
+    stnd: Path = Path(Path(__file__).parent.parent, 'prgs', 'stnd', program)
 
     # External program path:
-    extn: Path = Path(Path(__file__).parent.parent, 'prgs/extn/', program)
+    extn: Path = Path(Path(__file__).parent.parent, 'prgs', 'extn', program)
 
     return bins[program] if program in bins else (stnd if stnd.exists() else (extn if extn.exists() else False))
 
