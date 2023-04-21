@@ -9,7 +9,6 @@ from pathlib import Path
 from getpass import getpass
 from clint.textui import progress
 
-
 sys.path.append(Path(__file__).parent.parent.parent.parent.__str__())
 from mdls.gerdoolib import get_description, get_version, msg_out, authentication
 
