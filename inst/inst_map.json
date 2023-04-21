@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+
+  "main": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/gerdoo.py"],
+
+  "krnl": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/kernel.py"],
+
+  "shll": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/shll/shell.py"],
+
+  "mdls": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/__init__.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/gerdoolib.py"],
+
+  "bins": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/back/back.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/back/back.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/bash/bash.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/bash/bash.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/goto/goto.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/bash/goto.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/home/home.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/bash/home.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/path/path.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/bash/path.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/void/void.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/void/void.json"],
+
+  "stnd": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/clear/clear.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/clear/clear.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/deldir/deldir.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/deldir/deldir.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/delf/delf.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/delf/delf.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/install/install.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/install/install.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/items/items.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/items/items.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/map/map.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/map/map.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/newdir/newdir.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/newdir/newdir.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/newf/newf.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/newf/newf.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/system/system.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/system/system.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/uninstall/uninstall.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/uninstall/uninstall.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/update/update.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/update/update.json"],
+
+  "vrsn": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/vrsn/version.json"],
+
+  "packages": ["click",
+               "requests",
+               "prompt-toolkit",
+               "clint"]
+}
