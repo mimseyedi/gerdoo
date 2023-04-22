@@ -1,0 +1,9 @@
+{
+  "name": "repo",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program is the bridge between your system and the repository. With this program, you can search for programs in the repository and find out about updates.",
+  "executable": "repo.py",
+  "plugins": [],
+  "requirements": ["click", "requests", "clint", "beautifulsoup4"]
+}
