@@ -8,7 +8,7 @@
    __/ |
   |___/
 
-kernel v1.0.0
+kernel
 
 The gerdooo kernel is placed behind the shell and connects user commands to programs.
 The kernel interprets the user's commands, which it receives through the shell, and

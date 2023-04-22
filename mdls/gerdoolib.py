@@ -8,7 +8,7 @@
    __/ |
   |___/
 
-gerdoolib v1.0.0
+gerdoolib
 
 gerdoolib is a module to control and manage the gerdooo kernel|shell and its programs.
 With the help of this module, you can use pre-written functions for use in the project and

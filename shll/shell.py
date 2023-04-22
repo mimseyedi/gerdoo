@@ -8,7 +8,7 @@
    __/ |
   |___/
 
-shell v1.0.0
+shell
 
 shell is the first program that runs.
 shell is a CLI program that is placed between the user and the kernel
