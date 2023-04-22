@@ -1,0 +1,9 @@
+{
+  "name": "kernel",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "The gerdooo kernel is placed behind the shell and connects user commands to programs.\nThe kernel interprets the user's commands, which it receives through the shell, and\nmanages and controls the execution of the programs.",
+  "executable": "kernel.py",
+  "plugins": ["bins", "gerdoolib.py"],
+  "requirements": []
+}
