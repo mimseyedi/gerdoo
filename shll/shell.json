@@ -1,0 +1,9 @@
+{
+  "name": "shell",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "shell is the first program that runs.\nshell is a CLI program that is placed between the user and the kernel\nto send user commands to the kernel and finally display the output to the user.",
+  "executable": "shell.py",
+  "plugins": ["kernel"],
+  "requirements": ["prompt-toolkit"]
+}
