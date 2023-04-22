@@ -1,0 +1,9 @@
+{
+  "name": "setg",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program can change gerdoo settings according to regulations.",
+  "executable": "setg.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
