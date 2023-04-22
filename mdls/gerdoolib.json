@@ -1,0 +1,9 @@
+{
+  "name": "gerdoolib",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "gerdoolib is a module to control and manage the gerdooo kernel|shell and its programs.\nWith the help of this module, you can use pre-written functions for use in the project and\ngive speed and security to the development of gerdoo.",
+  "executable": "",
+  "plugins": [],
+  "requirements": []
+}
