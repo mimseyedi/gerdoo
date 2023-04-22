@@ -1,0 +1,9 @@
+{
+  "name": "repair",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program can find implementation problems and fix them.",
+  "executable": "repair.py",
+  "plugins": [],
+  "requirements": ["click", "requests", "clint"]
+}
