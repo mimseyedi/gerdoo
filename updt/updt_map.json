@@ -1,0 +1,14 @@
+{
+  "krnl": ["1.0.0",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/kernel.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/kernel.json"],
+
+  "shll": ["1.0.0",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/shll/shell.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/shll/shell.json"],
+
+  "mdls": ["1.0.0",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/__init__.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/gerdoolib.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/gerdoolib.json"]
+}
