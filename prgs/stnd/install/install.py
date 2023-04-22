@@ -111,7 +111,7 @@ def dl_file(url: str) -> bool:
         with open(Path(dest, Path(url).name), "wb") as file:
             total_length = int(response.headers.get('content-length'))
             for chunk in progress.bar(response.iter_content(chunk_size=1024),
-                                      label=f'Downloading {Path(url).name}\t',
+                                      label=f'Installing {Path(url).name}\t',
                                       expected_size=(total_length / 1024) + 1):
                 if chunk:
                     file.write(chunk)
