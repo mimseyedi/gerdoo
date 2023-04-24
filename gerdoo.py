@@ -24,11 +24,13 @@ import sys
 from pathlib import Path
 
 
-PYTHON_VERSION: tuple = (3, 11)
+PYTHON_VERSION_REQUIRED: tuple = (3, 11)
+PYTHON_VERSION_ONSYSTEM: tuple = (sys.version_info[0], sys.version_info[1])
 
 
 def main():
-    if sys.version_info[0] >= PYTHON_VERSION[0] and sys.version_info[1] >= PYTHON_VERSION[1]:
+    if PYTHON_VERSION_ONSYSTEM[0] >= PYTHON_VERSION_REQUIRED[0] and \
+            PYTHON_VERSION_ONSYSTEM[1] >= PYTHON_VERSION_REQUIRED[1]:
 
         shell_exec_path: Path = Path('shll', 'shell.py')
 
@@ -47,6 +49,6 @@ def main():
         print("\033[91mError: You need Python 3.11 or higher to run this program.\033[0m")
         print("       \033[91mDownload from this link: \033[0mhttps://www.python.org/downloads/")
 
-        
+
 if __name__ == '__main__':
     main()
