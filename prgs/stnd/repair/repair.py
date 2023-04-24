@@ -95,7 +95,7 @@ def scan_log() -> bool|tuple[dict, int]:
 
                             Path(root_path, 'inst'): ['gerdoo_installer.py'],
 
-                            Path(root_path, 'krnl'): ['kernel.py'],
+                            Path(root_path, 'krnl'): ['kernel.py', 'kernel.json'],
                             Path(root_path, 'krnl', 'bins'): [],
                             Path(root_path, 'krnl', 'bins', 'back'): ['back.py', 'back.json'],
                             Path(root_path, 'krnl', 'bins', 'bash'): ['bash.py', 'bash.json'],
@@ -104,7 +104,7 @@ def scan_log() -> bool|tuple[dict, int]:
                             Path(root_path, 'krnl', 'bins', 'path'): ['path.py', 'path.json'],
                             Path(root_path, 'krnl', 'bins', 'void'): ['void.py', 'void.json'],
 
-                            Path(root_path, 'mdls'): ['__init__.py', 'gerdoolib.py'],
+                            Path(root_path, 'mdls'): ['__init__.py', 'gerdoolib.py', 'gerdoolib.json'],
 
                             Path(root_path, 'prgs', 'extn'): [],
 
@@ -126,7 +126,9 @@ def scan_log() -> bool|tuple[dict, int]:
 
                             Path(root_path, 'setg'): ['PASS.json', 'PATH.json'],
 
-                            Path(root_path, 'shll'): ['shell.py'],
+                            Path(root_path, 'shll'): ['shell.py', 'shell.json'],
+
+                            Path(root_path, 'updt'): ['gerdoo_updater.py', 'updt_map.json'],
 
                             Path(root_path, 'vrsn'): ['version.json'], }
 
