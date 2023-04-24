@@ -109,6 +109,7 @@ def initializing(root_path: Path) -> None:
                          'prgs',
                          Path('prgs', 'stnd').__str__(),
                          Path('prgs', 'extn').__str__(),
+                         'updt',
                          'vrsn']
 
     os.chdir(root_path)
@@ -139,6 +140,8 @@ def get_path(root_path: Path, directory: str) -> Path:
             return Path(root_path, 'krnl', 'bins')
         case 'stnd':
             return Path(root_path, 'prgs', 'stnd')
+        case 'updt':
+            return Path(root_path, 'updt')
         case 'vrsn':
             return Path(root_path, 'vrsn')
 
@@ -348,7 +351,7 @@ def main() -> None:
                 reset_screen()
                 print_in_middle("Download and install programs from the repository...\n")
 
-                programs: list = ['main', 'krnl', 'shll', 'mdls', 'bins', 'stnd', 'vrsn']
+                programs: list = ['main', 'krnl', 'shll', 'mdls', 'bins', 'stnd', 'updt', 'vrsn']
 
                 for program in programs:
                     for file in install_info[program]:

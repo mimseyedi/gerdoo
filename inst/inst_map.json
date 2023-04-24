@@ -3,12 +3,15 @@
 
   "main": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/gerdoo.py"],
 
-  "krnl": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/kernel.py"],
+  "krnl": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/kernel.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/kernel.json"],
 
-  "shll": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/shll/shell.py"],
+  "shll": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/shll/shell.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/shll/shell.json"],
 
   "mdls": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/__init__.py",
-           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/gerdoolib.py"],
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/gerdoolib.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/mdls/gerdoolib.json"],
 
   "bins": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/back/back.py",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/krnl/bins/back/back.json",
@@ -39,12 +42,21 @@
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/newdir/newdir.json",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/newf/newf.py",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/newf/newf.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/repair/repair.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/repair/repair.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/repo/repo.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/repo/repo.json",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/setg/setg.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/setg/setg.json",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/system/system.py",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/system/system.json",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/uninstall/uninstall.py",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/uninstall/uninstall.json",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/update/update.py",
            "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/prgs/stnd/update/update.json"],
+
+  "updt": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/updt/gerdoo_updater.py",
+           "https://raw.githubusercontent.com/mimseyedi/gerdoo/master/updt/updt_map.json"],
 
   "vrsn": ["https://raw.githubusercontent.com/mimseyedi/gerdoo/master/vrsn/version.json"],
 
