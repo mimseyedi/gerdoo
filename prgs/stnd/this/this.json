@@ -1,0 +1,9 @@
+{
+  "name": "this",
+  "version": "1.0.0",
+  "author": "mimseyedi",
+  "description": "This program displays the main information of gerdoo.",
+  "executable": "this.py",
+  "plugins": [],
+  "requirements": ["click"]
+}
