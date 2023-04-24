@@ -3,3 +3,23 @@
  ## Table of Contents: <a class="anchor" id="contents"></a>
 * [What exactly is gerdoo?](#gerdoo)
 * [How to install](#install)
+  * [gerdoo Installer](*gerdoo_installer)
+* [How does gerdoo work?](#work)
+  * [Launcher](#luncher)
+    * [gerdoo Updater](#gerdoo_updater)
+  * [Shell](#shell)
+  * [Kernel](#kernel)
+  * [Programs](#programs)
+    * [Built-in programs](#bins)
+    * [Standard Programs](#stnd)
+    * [External Programs](#extn)
+  * [Modules](#modules)
+    * [gerdoolib](#gerdoolib)
+* [Contribute](#contribute)
+  * [The structure of program development](#structure)
+  * [Development of gerdoolib](#gerdoo_lib_dev)
+  * [Using the issues section for ideation](#idea)
+  * [Development of gerdoo with other languages](#lang_dev)
+* [Resources](#resources)
+
+  
