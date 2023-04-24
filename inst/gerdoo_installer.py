@@ -204,7 +204,7 @@ def dl_file(url: str, dest: Path) -> bool:
         with open(Path(dest, Path(url).name), "wb") as file:
             total_length = int(response.headers.get('content-length'))
             for chunk in progress.bar(response.iter_content(chunk_size=1024),
-                                      label=f'{space}{prg_name}\t',
+                                      label=f'{space}{prg_name}\t' if len(prg_name) < 15 else f'{space}{prg_name}',
                                       expected_size=(total_length / 1024) + 1):
                 if chunk:
                     file.write(chunk)
