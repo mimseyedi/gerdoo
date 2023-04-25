@@ -22,10 +22,11 @@ def main(**kwargs):
 
 
 @main.command(help="Display Jalali calendar in monthly form.")
+@click.option('-f', '--farsi', is_flag=True, help="Calendar printing in Farsi language")
 @click.argument('month', required=False, type=int)
 def cal(**kwargs):
     if kwargs['month'] is None:
-        jaldt.calendar()
+        jaldt.calendar(lang='farsi' if kwargs['farsi'] else 'fingilish')
     else:
         if kwargs['month'] in range(1, 13):
             jalali_months = {0: 'now', 1: 'farvardin', 2: 'ordibehesht',
@@ -33,7 +34,8 @@ def cal(**kwargs):
                              6: 'shahrivar', 7: 'mehr', 8: 'aban',
                              9: 'azar', 10: 'dey', 11: 'bahman', 12: 'esfand'}
 
-            jaldt.calendar(month=jalali_months[kwargs['month']])
+            jaldt.calendar(month=jalali_months[kwargs['month']],
+                           lang='farsi' if kwargs['farsi'] else 'fingilish')
         else:
             msg_out(nature='error', message='Error: The argument must be between 1 and 12.')
 
