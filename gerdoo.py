@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
                      _
                     | |
@@ -32,11 +34,11 @@ def main():
     if PYTHON_VERSION_ONSYSTEM[0] >= PYTHON_VERSION_REQUIRED[0] and \
             PYTHON_VERSION_ONSYSTEM[1] >= PYTHON_VERSION_REQUIRED[1]:
 
-        shell_exec_path: Path = Path('shll', 'shell.py')
+        shell_exec_path: Path = Path(Path(__file__).parent, 'shll', 'shell.py')
 
         if shell_exec_path.exists():
 
-            updater_path: Path = Path('updt', 'gerdoo_updater.py')
+            updater_path: Path = Path(Path(__file__).parent, 'updt', 'gerdoo_updater.py')
 
             if updater_path.exists():
                 os.system(f"{sys.executable} {updater_path.__str__()}")
