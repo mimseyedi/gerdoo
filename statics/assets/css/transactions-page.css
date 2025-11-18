@@ -1,0 +1,60 @@
+.dataTables_filter {
+    margin-bottom: 20px;
+}
+
+.nowrap-cell {
+    white-space: nowrap;
+}
+
+.small-col {
+    width: 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
+}
+
+.xsmall-col {
+    width: 130px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+}
+
+.med-col {
+    width: 250px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+}
+
+.large-col {
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+}
+
+#transactions-table tbody .dt-control:before {
+    font-family: 'boxicons' !important;
+    content: '\ebc0';
+    display: inline-block;
+    color: #555;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+#transactions-table tbody tr.shown .dt-control:before {
+    content: '\eb8b';
+}
+
+#transactions-table thead .dt-control:before {
+    content: none !important;
+}
+
+#addNewAddress {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.flatpickr-calendar {
+    z-index: 1100 !important;
+}
