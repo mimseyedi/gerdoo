@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}مدیریت تگ‌ها | گردو{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/css/tags-page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0 order-2 order-md-1">لیست تگ‌ها</h4>
+
+            <button type="button" class="btn btn-primary order-1 order-md-2"
+                    data-bs-toggle="modal" data-bs-target="#addTagModal">
+                <i class="bx bx-plus me-1"></i> تگ جدید
+            </button>
+        </div>
+
+        <div class="search-input-container">
+            <input type="text" id="tagSearchInput" class="form-control" placeholder="جستجوی تگ ..." dir="rtl">
+        </div>
+
+        <div class="card-body pt-0">
+            {% if tags %}
+            <div id="tagsContainer" class="tags-grid">
+                {% for tag in tags %}
+                <div class="tag-card bg-label-secondary" data-tag-id="{{ tag.id }}" data-tag-name="{{ tag.name }}" data-tag-lower-name="{{ tag.name|lower }}">
+
+                    <div class="d-flex align-items-center">
+                        <span class="tag-count">{{ tag.transaction_count }}</span>
+                        <span class="tag-name">{{ tag.name }}</span>
+                    </div>
+
+                    <div class="tag-actions">
+                         <i class='bx bx-trash action-btn text-danger delete-tag-btn'
+                            title="حذف تگ"
+                            data-tag-id="{{ tag.id }}"
+                            data-tag-name="{{ tag.name }}"></i>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <h5 id="noResultsMessage" class="text-center text-muted p-4 d-none">هیچ تگی یافت نشد.</h5>
+            {% else %}
+                <h5 class="text-center text-muted p-4">هیچ تگی تا به اینجا ثبت نشده است!</h5>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addTagModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTagModalTitle">ایجاد تگ جدید</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <form id="addTagForm" onsubmit="return false">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3 fv-plugins-icon-container">
+                        <label for="tagName" class="form-label">نام تگ</label>
+                        <input type="text" id="tagName" name="name" class="form-control" placeholder="مثال: کافه، اسنپ_فود، سوپر_مارکت و ..." required />
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-primary" id="saveTagBtn">ذخیره تگ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteTagModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="deleteTagModalTitle"><i class="bx bx-trash me-1"></i> حذف تگ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <form id="deleteTagForm" onsubmit="return false">
+                {% csrf_token %}
+                <input type="hidden" id="deleteTagId" name="tag_id">
+                <div class="modal-body">
+                    <p class="text-center mb-4">
+                        آیا مطمئنید می‌خواهید تگ <strong id="deleteTagNamePlaceholder" class="text-danger"></strong> را حذف کنید؟<br>
+                        "این تگ فقط از تراکنش‌ها <span class="fw-bold text-danger">جدا</span> می‌شود و تراکنش‌ها حفظ خواهند شد."
+                    </p>
+
+                    <div class="mb-3 fv-plugins-icon-container">
+                        <label class="form-label" for="confirmDeleteInput">برای تایید، عبارت "<span class="fw-bold text-danger">موافقم</span>" را وارد کنید:</label>
+                        <input type="text" id="confirmDeleteInput" class="form-control" required>
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-danger" id="confirmDeleteButton" disabled>حذف کن</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block page_js %}
+<script>
+    $(document).ready(function() {
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        const addTagUrl = "{% url 'add_tag_ajax' %}";
+        const deleteTagUrl = "{% url 'delete_tag_ajax' %}";
+        const deleteConfirmText = "موافقم";
+
+        function handleValidationErrors(errors, formId) {
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback.d-block').remove();
+
+            let errorSummary = 'خطاهای زیر مانع از انجام عملیات شدند: <br><br><ul>';
+            let hasError = false;
+
+            for (const fieldName in errors) {
+                const errorMessage = errors[fieldName];
+                hasError = true;
+
+                errorSummary += `<li>${errorMessage}</li>`;
+
+                const inputElement = $(`#${formId} [name="${fieldName}"]`);
+
+                if (inputElement.length) {
+                    inputElement.addClass('is-invalid');
+                    if (inputElement.next('.invalid-feedback').length === 0) {
+                         inputElement.after(`<div class="invalid-feedback d-block">${errorMessage}</div>`);
+                    }
+                }
+            }
+
+            if (hasError) {
+                Swal.fire({
+                    title: 'خطای اعتبارسنجی',
+                    html: errorSummary,
+                    icon: 'error',
+                    confirmButtonText: 'متوجه شدم',
+                    customClass: { confirmButton: 'btn btn-danger', htmlContainer: 'text-right' },
+                    buttonsStyling: false
+                });
+            }
+        }
+
+        $('#tagSearchInput').on('input', function() {
+            const searchTerm = $(this).val().toLowerCase().trim();
+            let resultsFound = false;
+
+            const $tagCards = $('#tagsContainer .tag-card');
+
+            $tagCards.each(function() {
+                const $card = $(this);
+                const tagName = $card.data('tag-lower-name');
+
+                if (tagName.includes(searchTerm)) {
+                    $card.show();
+                    resultsFound = true;
+                } else {
+                    $card.hide();
+                }
+            });
+
+            if (resultsFound) {
+                $('#noResultsMessage').addClass('d-none');
+            } else {
+                $('#noResultsMessage').removeClass('d-none');
+            }
+        });
+
+        $('#addTagForm').submit(function(e) {
+            e.preventDefault();
+
+            const $form = $(this);
+            const formData = $form.serialize();
+
+            const $submitBtn = $('#saveTagBtn');
+            $submitBtn.prop('disabled', true).text('در حال ذخیره...');
+
+            $.ajax({
+                type: 'POST',
+                url: addTagUrl,
+                data: formData,
+                dataType: 'json',
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(response) {
+                    $('#tagName').val('');
+                    $('#addTagForm').get(0).reset();
+                    Swal.fire({
+                        title: "ثبت شد!",
+                        text: response.message,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        $('#addTagModal').modal('hide');
+                        window.location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    $submitBtn.prop('disabled', false).text('ذخیره تگ');
+                    if (xhr.status === 400) {
+                        handleValidationErrors(xhr.responseJSON.errors, 'addTagForm');
+                    } else {
+                        const errorText = xhr.responseJSON ? (xhr.responseJSON.message || xhr.responseJSON.errors || "خطایی غیرمنتظره رخ داده است.") : "خطای ارتباط با سرور یا خطای داخلی.";
+                        Swal.fire({
+                            title: 'خطای سیستمی!',
+                            text: errorText,
+                            icon: "error"
+                        });
+                        console.error(xhr.responseText);
+                    }
+                }
+            });
+        });
+
+        $('#addTagModal').on('hidden.bs.modal', function () {
+            $('#addTagForm').get(0).reset();
+            $('#tagName').val('');
+
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback.d-block').remove();
+
+            $('#saveTagBtn').prop('disabled', false).text('ذخیره تگ');
+        });
+
+        $('#tagsContainer').on('click', '.delete-tag-btn', function() {
+            const tagId = $(this).data('tag-id');
+            const tagName = $(this).data('tag-name');
+
+            $('#deleteTagId').val(tagId);
+            $('#deleteTagNamePlaceholder').text(tagName);
+            $('#confirmDeleteInput').val('');
+            $('#confirmDeleteButton').prop('disabled', true);
+
+            $('#deleteTagModal').modal('show');
+        });
+
+        $('#confirmDeleteInput').on('input', function() {
+            const isMatch = $(this).val().trim() === deleteConfirmText;
+            $('#confirmDeleteButton').prop('disabled', !isMatch);
+        });
+
+        $('#deleteTagForm').submit(function(e) {
+            e.preventDefault();
+
+            const $confirmBtn = $('#confirmDeleteButton');
+
+            if ($('#confirmDeleteInput').val().trim() !== deleteConfirmText) {
+                Swal.fire('خطا', 'متن تاییدیه‌ی وارد شده صحیح نیست.', 'error');
+                return;
+            }
+
+            const formData = $(this).serialize();
+
+            $confirmBtn.prop('disabled', true).text('در حال حذف...');
+
+            $.ajax({
+                type: 'POST',
+                url: deleteTagUrl,
+                data: formData,
+                dataType: 'json',
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(response) {
+                    Swal.fire({
+                        title: "حذف شد!",
+                        text: response.message,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        $('#deleteTagModal').modal('hide');
+                        window.location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    $confirmBtn.prop('disabled', false).text('حذف کن');
+                    const errorText = xhr.responseJSON ? (xhr.responseJSON.message || "خطایی غیرمنتظره رخ داده است.") : "خطای ارتباط با سرور یا خطای داخلی.";
+                    Swal.fire({
+                        title: "خطای سیستمی!",
+                        text: errorText,
+                        icon: "error"
+                    });
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+        $('#deleteTagModal').on('hidden.bs.modal', function () {
+            $('#deleteTagForm').get(0).reset();
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback.d-block').remove();
+            $('#confirmDeleteButton').prop('disabled', true).text('حذف کن');
+        });
+    });
+</script>
+{% endblock page_js %}
