@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'main.apps.MainConfig',
+    'jalali_date',
 ]
 
 MIDDLEWARE = [
@@ -133,7 +135,12 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Jalali datetime settings
+JALALI_DATE_DEFAULTS = {
+   'NOV_START_YEAR': 2025,
+}
 
+# S-Pages redirecting settings
 LOGIN_URL = '/access-denied/'
 REAL_LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'dashboard'
