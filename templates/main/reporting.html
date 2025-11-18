@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}گزارش‌گیری | گردو{% endblock title %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">اعمال فیلترهای گزارش</h5>
+            <button id="exportExcelBtn" class="btn btn-outline-success" disabled>
+                <i class="bx bx-table me-1"></i> خروجی اکسل
+            </button>
+        </div>
+
+        <div class="card-body">
+            <form id="reportFilterForm" class="row g-3">
+
+                <div class="col-md-3 col-sm-6">
+                    <label for="transactionType" class="form-label">نوع تراکنش</label>
+                    <select id="transactionType" name="type" class="form-select select2">
+                        <option value="all" selected>همه</option>
+                        <option value="T">انتقال</option>
+                        <option value="I">درآمد</option>
+                        <option value="E">هزینه</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <label for="categoryFilter" class="form-label">دسته‌بندی</label>
+                    <select id="categoryFilter" name="category" class="form-select select2">
+                        <option value="all" selected>همه</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <label for="tagFilter" class="form-label">تگ</label>
+                    <select id="tagFilter" name="tag" class="form-select select2">
+                        <option value="all" selected>همه</option>
+                        {% for tag in tags %}
+                            <option value="{{ tag.id }}">{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <label for="sourceCardFilter" class="form-label">حساب مبدأ</label>
+                    <select id="sourceCardFilter" name="source" class="form-select select2">
+                        <option value="all" selected>همه</option>
+                        {% for card in cards %}
+                            <option value="{{ card.id }}">{{ card.get_name_display }} - {{ card.owner }} - {{ card.number | format_card_number_last4 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <label for="destinationCardFilter" class="form-label">حساب مقصد</label>
+                    <select id="destinationCardFilter" name="destination" class="form-select select2">
+                        <option value="all" selected>همه</option>
+                        {% for card in cards %}
+                            <option value="{{ card.id }}">{{ card.get_name_display }} - {{ card.owner }} - {{ card.number | format_card_number_last4 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2 col-4">
+                    <label for="filterDay" class="form-label">روز</label>
+                    <input type="number" id="filterDay" name="day" class="form-control" value="{{ current_day }}" min="1" max="31">
+                </div>
+                <div class="col-md-2 col-4">
+                    <label for="filterMonth" class="form-label">ماه</label>
+                    <input type="number" id="filterMonth" name="month" class="form-control" value="{{ current_month }}" min="1" max="12">
+                </div>
+                <div class="col-md-2 col-4">
+                    <label for="filterYear" class="form-label">سال</label>
+                    <input type="number" id="filterYear" name="year" class="form-control" value="{{ current_year }}" min="1300" max="1500">
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <label for="reportType" class="form-label">نوع گزارش</label>
+                    <select id="reportType" name="report_type" class="form-select">
+                        <option value="daily" selected>روزانه</option>
+                        <option value="monthly">ماهانه</option>
+                        <option value="annual">سالانه</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-end mt-4">
+                    <button type="submit" class="btn btn-primary w-100" id="applyFiltersBtn">
+                        <i class="bx bx-filter-alt me-1"></i> اعمال فیلترها
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <h5 class="card-header">نتایج فیلتر شده</h5>
+        <div class="table-responsive text-nowrap p-4">
+            <table class="table table-hover" id="transactionsTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>تاریخ</th>
+                        <th>نوع</th>
+                        <th>دسته‌بندی</th>
+                        <th>تگ‌ها</th>
+                        <th>مبلغ (ریال)</th>
+                        <th>مبدأ</th>
+                        <th>مقصد</th>
+                        <th>توضیحات</th>
+                    </tr>
+                </thead>
+                <tbody class="table-border-bottom-0" id="transactionsTableBody">
+                    <tr><td colspan="9" class="text-center text-muted">فیلتری اعمال نشده است.</td></tr>
+                </tbody>
+                <tfoot id="transactionsTableFooter">
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block page_js %}
+<script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('reportFilterForm');
+        const tableBody = document.getElementById('transactionsTableBody');
+        const exportBtn = document.getElementById('exportExcelBtn');
+        const tableFooter = document.getElementById('transactionsTableFooter');
+
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+
+            const filterUrl = `/api/reports/filter/?${params}`;
+
+            tableBody.innerHTML = '<tr><td colspan="9" class="text-center text-primary">در حال جستجوی داده‌ها...</td></tr>';
+            exportBtn.disabled = true;
+
+            fetch(filterUrl, {
+                method: 'GET',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            })
+            .then(response => response.json())
+            .then(data => {
+                renderTable(data.transactions, data.total_amount_formatted);
+                // پس از موفقیت، دکمه اکسل فعال می‌شود
+                exportBtn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error fetching filtered data:', error);
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center text-danger">خطا در بارگذاری داده‌ها.</td></tr>';
+            });
+        });
+
+        function renderTable(transactions, totalAmountFormatted) {
+            let html = '';
+            let footerHtml = '';
+            const colSpan = 9;
+
+            if (transactions.length === 0) {
+                html = '<tr><td colspan="9" class="text-center text-muted">هیچ نتیجه‌ای با فیلترهای اعمال شده یافت نشد.</td></tr>';
+                tableFooter.innerHTML = '';
+            } else {
+                transactions.forEach((tx, index) => {
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${tx.date}</td>
+                            <td>${tx.kind_display}</td>
+                            <td>${tx.category_name}</td>
+                            <td>${tx.tag_names || '---'}</td>
+                            <td>${tx.amount_formatted}</td>
+                            <td>${tx.source_card_name || '---'}</td>
+                            <td>${tx.destination_card_name || '---'}</td>
+                            <td>${tx.description || '---'}</td>
+                        </tr>
+                    `;
+                });
+
+                if (totalAmountFormatted) {
+                    footerHtml = `
+                        <tr class="table-info fw-bold">
+                            <td colspan="5" class="text-end">جمع مبالغ:</td>
+                            <td colspan="4" class="text-start">${totalAmountFormatted}</td>
+                        </tr>
+                    `;
+                }
+
+                tableFooter.innerHTML = footerHtml;
+            }
+            tableBody.innerHTML = html;
+        }
+
+        exportBtn.addEventListener('click', function() {
+            const form = document.getElementById('reportFilterForm');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+
+            window.location.href = `/api/reports/export/?${params}`;
+        });
+    });
+</script>
+{% endblock page_js %}
