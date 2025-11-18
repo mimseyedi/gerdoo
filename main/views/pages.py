@@ -1,4 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import (
+    render,
+    redirect,
+)
 
 
 def custom_page_not_found(request, *args, **kwargs):

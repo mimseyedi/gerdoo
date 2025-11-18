@@ -3,9 +3,17 @@ import jdatetime
 from decimal import Decimal
 from django.shortcuts import render
 from django.http import JsonResponse
-from datetime import timedelta, datetime, date
-from django.db.models import Sum, DecimalField
 from django.contrib.auth.decorators import login_required
+
+from datetime import (
+    date,
+    datetime,
+    timedelta,
+)
+from django.db.models import (
+    Sum,
+    DecimalField,
+)
 from ..models import (
     Transaction,
     Card,
