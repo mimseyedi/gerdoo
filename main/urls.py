@@ -25,6 +25,13 @@ from .views.transactions import (
     get_transactions_by_month,
     get_transaction_details_by_id,
 )
+# Categories
+from .views.categories import (
+    categories,
+    get_filtered_categories_ajax,
+    add_category_ajax,
+    get_category_transactions_ajax,
+)
 
 
 urlpatterns = [
@@ -48,4 +55,10 @@ urlpatterns = [
     path('get_categories/', get_categories_by_kind, name='get_categories_by_kind'),
     path('transactions/details/', get_transaction_details_by_id, name='get_transaction_details'),
     path('transactions/get_by_month/', get_transactions_by_month, name='get_transactions_by_month'),
+
+    # Categories
+    path('categories', categories, name='categories'),
+    path('categories/data/', get_filtered_categories_ajax, name='get_filtered_categories_ajax'),
+    path('categories/add/', add_category_ajax, name='add_category_ajax'),
+    path('categories/transactions/data/', get_category_transactions_ajax, name='get_category_transactions_ajax'),
 ]
