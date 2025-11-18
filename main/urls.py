@@ -46,6 +46,12 @@ from .views.cards import (
     activate_card,
     deactivate_card,
 )
+# Gold
+from .views.gold import (
+    gold,
+    add_gold,
+    sell_gold,
+)
 
 
 urlpatterns = [
@@ -87,4 +93,9 @@ urlpatterns = [
     path('cards/add/', add_card, name='add_card'),
     path('cards/activate/', activate_card, name='activate_card'),
     path('cards/deactivate/', deactivate_card, name='deactivate_card'),
+
+    # Gold
+    path('gold', gold, name='gold'),
+    path('gold/add', add_gold, name='add_gold'),
+    path('gold/sell', sell_gold, name='sell_gold'),
 ]
