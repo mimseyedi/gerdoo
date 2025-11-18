@@ -39,6 +39,13 @@ from .views.tags import (
     add_tag_ajax,
     delete_tag_ajax,
 )
+# Cards
+from .views.cards import (
+    cards,
+    add_card,
+    activate_card,
+    deactivate_card,
+)
 
 
 urlpatterns = [
@@ -74,4 +81,10 @@ urlpatterns = [
     path('get_all_tags/', get_all_tags, name='get_all_tags'),
     path('tags/add/', add_tag_ajax, name='add_tag_ajax'),
     path('tags/delete/', delete_tag_ajax, name='delete_tag_ajax'),
+
+    # Cards
+    path('cards', cards, name='cards'),
+    path('cards/add/', add_card, name='add_card'),
+    path('cards/activate/', activate_card, name='activate_card'),
+    path('cards/deactivate/', deactivate_card, name='deactivate_card'),
 ]
