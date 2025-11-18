@@ -1,5 +1,4 @@
 from django.contrib import admin
-from jdatetime import date as jdate
 from jalali_date.admin import ModelAdminJalaliMixin
 from .utils import (
     format_currency,
