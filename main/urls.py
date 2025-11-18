@@ -52,6 +52,12 @@ from .views.gold import (
     add_gold,
     sell_gold,
 )
+# Reporting
+from .views.reporting import (
+    reporting,
+    filter_transactions_ajax,
+    export_transactions_excel,
+)
 
 
 urlpatterns = [
@@ -98,4 +104,9 @@ urlpatterns = [
     path('gold', gold, name='gold'),
     path('gold/add', add_gold, name='add_gold'),
     path('gold/sell', sell_gold, name='sell_gold'),
+
+    # Reporting
+    path('reporting', reporting, name='reporting'),
+    path('api/reports/filter/', filter_transactions_ajax, name='filter_transactions_ajax'),
+    path('api/reports/export/', export_transactions_excel, name='export_transactions_excel'),
 ]
