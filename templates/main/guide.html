@@ -1,0 +1,778 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}راهنما | گردو{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/css/guide-page.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendor/css/pages/page-help-center.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="layout-page">
+  <div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+      <h2 class="text-center pb-1 secondary-font">
+          راهنما
+      </h2>
+      <p class="text-secondary text-center"><i class="bx tf-icon bx-info-circle text-primary fs-4"></i> راهنمای تمام بخش ها و اطلاعات مرتبط با هر صفحه قابل مشاهده و مطالعه است</p>
+      <div class="d-flex justify-content-center mt-5 justify-content-center">
+        <div class="nav-align-top">
+            <ul class="nav nav-pills mb-3 nav-tabs" role="tablist">
+                <li class="nav-item" style="margin-left: 10px" role="presentation">
+                    <button type="button" class="nav-link active page-guide-btn" role="tab" data-bs-toggle="tab" data-bs-target="#pages-guide" aria-controls="pages-guide" aria-selected="true">
+                        راهنمای صفحات
+                    </button>
+                </li>
+                <li class="nav-item" style="margin-left: 10px" role="presentation">
+                    <button type="button" class="nav-link start-guide-btn" role="tab" data-bs-toggle="tab" data-bs-target="#getting-started-guide" aria-controls="getting-started-guide" aria-selected="false">
+                        راهنمای شروع
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button type="button" class="nav-link launcher-guide-btn" role="tab" data-bs-toggle="tab" data-bs-target="#launcher-guide" aria-controls="launcher-guide" aria-selected="false">
+                        راهنمای راه‌انداز (لانچر)
+                    </button>
+                </li>
+            </ul>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="tab-content pt-3">
+        <div class="tab-pane fade show active" id="pages-guide" role="tabpanel">
+          <div class="col-lg-12 col-md-8 col-12">
+            <div class="tab-content py-0">
+              <!-- Dashboard -->
+              <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                <div class="d-flex align-items-center mb-3 gap-3">
+                  <div>
+                    <span class="badge bg-label-primary rounded-2 p-2 mt-1">
+                      <i class="bx bx-home fs-3 lh-1"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <h5 class="mb-0">
+                      <span class="align-middle">داشبورد</span>
+                    </h5>
+                    <span class="lh-1-85">این بخش، اطلاعات و گزارش‌های مختصر و مفیدی از داده‌های شما به نمایش می‌گذارد که شامل قسمت های زیر می‌باشد:</span>
+                  </div>
+                </div>
+                <div id="accordionDashboard" class="accordion accordion-header-primary">
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#accordionDashboard-1" aria-controls="accordionDashboard-1">
+                        موجودی
+                      </button>
+                    </h2>
+
+                    <div id="accordionDashboard-1" class="accordion-collapse collapse" style="">
+                      <div class="accordion-body lh-2">
+                        در بخش موجودی از صفحه‌ی داشبورد، شما میتوانید موجودی و اطلاعات مربوط به حساب/کارت‌های بانکی خود را مانند تصویر زیر مشاهده کنید:
+                        <div class="row justify-content-center">
+                          <img src="{% static 'assets/img/guide/dashboard-balance-card.svg' %}" style="width: 80%">
+                        </div>
+                        این بخش، یعنی بخش موجودی، یک نمای سریع و کلی از موجودی و وضعیت کارت‌های بانکی به شما می‌دهد که البته برای دریافت جزئیات بیشتر و مدیریت کارت‌های بانکی‌ای که به برنامه اضافه کرده‌اید، میتوانید به صفحه‌ی <a href="{% url 'cards' %}">کارت‌های بانکی</a> از منوی بالا مراجعه کنید.
+                          <br><br>
+                        در صفحه‌ی مخصوص به کارت‌های بانکی، شما می‌توانید کارت‌های جدیدی رو اضافه کنید و کارت‌های موجود را فعالسازی و یا غیرفعال کنید. برای جزئیات و راهنمایی بیشتر این <a href="#cards">قسمت</a>  را مطالعه کنید.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionDashboard-2" aria-controls="accordionDashboard-2">
+                        گزارش سالانه
+                      </button>
+                    </h2>
+                    <div id="accordionDashboard-2" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        در بخش گزارش سالانه در داشبورد، شما می‌توانید یک گزارش نموداری سالانه از تراکنش‌های خود به تفکیک ماه‌های سال دریافت کنید و تراکنش‌های خود را در حالت های <span class="text-danger fw-bold">هزینه</span>/<span class="text-success fw-bold">درآمد</span>/<span class="text-info fw-bold">انتقال</span>، بررسی کنید.
+                        <div class="row justify-content-center">
+                          <img src="{% static 'assets/img/guide/dashboard-year-report-card.svg' %}" style="width: 80%">
+                        </div>
+                        <h6>بخش گزارش سالانه شامل موارد و اطلاعات زیر است:</h6>
+                        <ul>
+                          <li>نمایش سال جاری شمسی</li>
+                          <li>میانگین هزینه/درآمد/انتقال در هر ماه</li>
+                          <li>منوی کشویی برای فیلتر کردن گزارش بر اساس نوع تراکنش‌ها</li>
+                          <li>نمودار سالانه به تفکیک ماه‌های سال</li>
+                          <li>منوی خروجی <i class="bx bx-menu"></i> به منظور دریافت گزارش‌ از نمودار در فرمت های: SVG, PNG و به صورت متنی در قالب فایل CSV</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionDashboard-3" aria-controls="accordionDashboard-3">
+                        گزارش ماهانه
+                      </button>
+                    </h2>
+                    <div id="accordionDashboard-3" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        در بخش گزارش ماهانه در داشبورد، شما می‌توانید اطلاعات مربوط به هزینه/درآمد/انتقال های خود را فیلتر شده در ماه جاری، در قالب دسته‌بندی هایی که برای تراکنش‌هایتان در نظر گرفته اید، تماشا کنید. این اطلاعات طوری تنظیم شده‌اند که قابل مقایسه و تجزیه و تحلیل باشند.
+
+                        <div class="row justify-content-center mb-4 mt-4">
+                          <img src="{% static 'assets/img/guide/dashboard-month-report-card.svg' %}" style="width: 95%">
+                        </div>
+
+                        <h6>بخش گزارش ماهانه شامل موارد و اطلاعات زیر است:</h6>
+                        <ul>
+                          <li>نمایش ماه و سال جاری شمسی</li>
+                          <li>میانگین هزینه/درآمد/انتقال در هر روز</li>
+                          <li>منوی کشویی برای فیلتر کردن گزارش بر اساس نوع تراکنش‌ها</li>
+                          <li>مجموع مبلغ هر نوع از تراکنش (هزینه/درآمد/انتقال) در ماه جاری</li>
+                          <li>نمایش هر دسته‌بندی به همراه: نام دسته‌بندی، مجموع مبلغ، درصد از کل و اطلاعات مربوط به تگ‌های دسته‌بندی مورد نظر</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionDashboard-4" aria-controls="accordionDashboard-4">
+                        گزارش سرمایه‌گذاری طلا
+                      </button>
+                    </h2>
+                    <div id="accordionDashboard-4" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        در بخش گزارش سرمایه‌گذاری طلا در داشبورد، شما می‌توانید اطلاعات مربوط به سرمایه‌گذاریتان در زمینه‌ی طلا را مشاهده کنید.
+
+                        <div class="row justify-content-center mb-4 mt-4">
+                          <img src="{% static 'assets/img/guide/dashboard-gold-report-card.svg' %}" style="width: 90%">
+                        </div>
+
+                        <h6>بخش گزارش سرمایه‌گذاری طلا شامل موارد و اطلاعات زیر است:</h6>
+                        <ul>
+                          <li>
+                            طلای موجود (سرمایه)
+                            <ul>
+                              <li>وزن تمام موجودی طلا/سرمایه شما در قالب سوت</li>
+                            </ul>
+                          </li>
+                          <li>
+                            مجموع خرید طلا
+                            <ul>
+                              <li>وزن مجموع طلاهایی که تا به حال خریداری کرده‌اید</li>
+                              <li>مجموع قیمت تمام طلاهایی که تا به حال خریداری کرده‌اید</li>
+                            </ul>
+                          </li>
+                          <li>
+                            مجموع فروش طلا
+                            <ul>
+                              <li>وزن مجموع طلاهایی که تا به حال فروخته‌اید</li>
+                              <li>مجموع قیمت تمام طلاهایی که تا به حال فروخته‌اید</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionDashboard-5" aria-controls="accordionDashboard-5">
+                        بیشترین/کمترین هزینه در سال
+                      </button>
+                    </h2>
+                    <div id="accordionDashboard-5" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز
+
+                        <div class="row justify-content-center mb-3 mt-3">
+                          <img src="{% static 'assets/img/guide/dashboard-up-down-report-card.svg' %}" style="width: 95%">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br><br>
+
+              <!-- Transactions -->
+              <div class="tab-pane fade show active" id="transactions" role="tabpanel">
+                <div class="d-flex align-items-center mb-3 gap-3">
+                  <div>
+                    <span class="badge bg-label-danger rounded-2 p-2 mt-1">
+                      <i class="bx bx-dollar fs-3 lh-1"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <h5 class="mb-0">
+                      <span class="align-middle">تراکنش‌ها</span>
+                    </h5>
+                    <span class="lh-1-85">این بخش، به مدیریت تراکنش‌ها و داده‌های مالی شما کمک میکند و یکی از مهمترین بخش‌های این برنامه محسوب میشود.</span>
+                  </div>
+                </div>
+                <div id="accordionTransactions" class="accordion accordion-header-primary">
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#accordionTransactions-1" aria-controls="accordionTransactions-1">
+                        نمایش تراکنش‌ها
+                      </button>
+                    </h2>
+
+                    <div id="accordionTransactions-1" class="accordion-collapse collapse" style="">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionTransactions-2" aria-controls="accordionTransactions-2">
+                        جستجو
+                      </button>
+                    </h2>
+                    <div id="accordionTransactions-2" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionTransactions-3" aria-controls="accordionTransactions-3">
+                        اضافه کردن تراکنش جدید
+                      </button>
+                    </h2>
+                    <div id="accordionTransactions-3" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها
+                        <a href="javascript:void(0);">لورم ایپسوم متن</a> لورم ایپسوم متن ساختگی با تولید سادگی
+                        <strong>1-000-000-000</strong>لورم ایپسوم متن ساختگی
+                        <a href="javascript:void(0);">order@companymail.com</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br><br>
+
+              <!-- Categories -->
+              <div class="tab-pane fade show active" id="categories" role="tabpanel">
+                <div class="d-flex align-items-center mb-3 gap-3">
+                  <div>
+                    <span class="badge bg-label-info rounded-2 p-2 mt-1">
+                      <i class="bx bx-category fs-3 lh-1"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <h5 class="mb-0">
+                      <span class="align-middle">دسته بندی‌ها</span>
+                    </h5>
+                    <span class="lh-1-85">این بخش، مربوط به دسته بندی‌هایی است که شما می‌توانید برای انواع تراکنش‌هایتان در نظر بگیرید و اطلاعات خوبی از هرکدام بدست بیاورید.</span>
+                  </div>
+                </div>
+                <div id="accordionCategories" class="accordion accordion-header-primary">
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#accordionCategories-1" aria-controls="accordionCategories-1">
+                        نمایش دسته بندی‌ها
+                      </button>
+                    </h2>
+
+                    <div id="accordionCategories-1" class="accordion-collapse collapse" style="">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionCategories-2" aria-controls="accordionCategories-2">
+                        اضافه کردن دسته بندی جدید
+                      </button>
+                    </h2>
+                    <div id="accordionCategories-2" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br><br>
+
+              <!-- Tags -->
+              <div class="tab-pane fade show active" id="tags" role="tabpanel">
+                <div class="d-flex align-items-center mb-3 gap-3">
+                  <div>
+                    <span class="badge tags-bg rounded-2 p-2 mt-1">
+                      <i class="bx bx-hash fs-3 lh-1"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <h5 class="mb-0">
+                      <span class="align-middle">تگ‌ها</span>
+                    </h5>
+                    <span class="lh-1-85">در این بخش، شما می‌توانید تگ‌های تراکنشی را ایجاد و مدیریت کنید. تگ‌هایی که ثبت تراکنش‌های شما را بسیار دقیق تر میکنند!</span>
+                  </div>
+                </div>
+                <div id="accordionTags" class="accordion accordion-header-primary">
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#accordionTags-1" aria-controls="accordionTags-1">
+                        نمایش تگ‌ها
+                      </button>
+                    </h2>
+
+                    <div id="accordionTags-1" class="accordion-collapse collapse" style="">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionTags-2" aria-controls="accordionTags-2">
+                        ایجاد تگ جدید
+                      </button>
+                    </h2>
+                    <div id="accordionTags-2" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br><br>
+
+              <!-- Cards -->
+              <div class="tab-pane fade show active" id="cards" role="tabpanel">
+                <div class="d-flex align-items-center mb-3 gap-3">
+                  <div>
+                    <span class="badge bg-label-success rounded-2 p-2 mt-1">
+                      <i class="bx bx-credit-card fs-3 lh-1"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <h5 class="mb-0">
+                      <span class="align-middle">کارت‌های بانکی</span>
+                    </h5>
+                    <span class="lh-1-85">این بخش، کارت‌ها/حساب‌های بانکی شما رو مدیریت میکند و شامل بخش‌های زیر است:</span>
+                  </div>
+                </div>
+                <div id="accordionCards" class="accordion accordion-header-primary">
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#accordionCards-1" aria-controls="accordionCards-1">
+                        نمایش کارت‌های بانکی
+                      </button>
+                    </h2>
+
+                    <div id="accordionCards-1" class="accordion-collapse collapse" style="">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionCards-2" aria-controls="accordionCards-2">
+                        اضافه کردن کارت بانکی جدید
+                      </button>
+                    </h2>
+                    <div id="accordionCards-2" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionCards-3" aria-controls="accordionCards-3">
+                        حدف/غیرفعال سازی کارت
+                      </button>
+                    </h2>
+                    <div id="accordionCards-3" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها
+                        <a href="javascript:void(0);">لورم ایپسوم متن</a> لورم ایپسوم متن ساختگی با تولید سادگی
+                        <strong>1-000-000-000</strong>لورم ایپسوم متن ساختگی
+                        <a href="javascript:void(0);">order@companymail.com</a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionCards-4" aria-controls="accordionCards-4">
+                          بازیابی یا فعالسازی مجدد کارت
+                      </button>
+                    </h2>
+                    <div id="accordionCards-4" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br><br>
+
+              <!-- Gold -->
+              <div class="tab-pane fade show active" id="gold" role="tabpanel">
+                <div class="d-flex align-items-center mb-3 gap-3">
+                  <div>
+                    <span class="badge bg-label-warning rounded-2 p-2 mt-1">
+                      <i class="bx bx-coin fs-3 lh-1"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <h5 class="mb-0">
+                      <span class="align-middle">سرمایه‌گذاری طلا</span>
+                    </h5>
+                    <span class="lh-1-85">در این بخش، شما می‌توانید اطلاعات مربوط به سرمایه‌گذاریتان در زمینه‌ی خرید و فروش طلا را مدیریت کنید.</span>
+                  </div>
+                </div>
+                <div id="accordionGold" class="accordion accordion-header-primary">
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#accordionGold-1" aria-controls="accordionGold-1">
+                        نمایش رکورد‌های ثبت شده از خرید و فروش
+                      </button>
+                    </h2>
+
+                    <div id="accordionGold-1" class="accordion-collapse collapse" style="">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionGold-2" aria-controls="accordionGold-2">
+                          اضافه کردت یا ثبت اطلاعات خرید طلا
+                      </button>
+                    </h2>
+                    <div id="accordionGold-2" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionGold-3" aria-controls="accordionGold-3">
+                        فروش طلا
+                      </button>
+                    </h2>
+                    <div id="accordionGold-3" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها
+                        <a href="javascript:void(0);">لورم ایپسوم متن</a> لورم ایپسوم متن ساختگی با تولید سادگی
+                        <strong>1-000-000-000</strong>لورم ایپسوم متن ساختگی
+                        <a href="javascript:void(0);">order@companymail.com</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br><br>
+
+              <!-- Reporting -->
+              <div class="tab-pane fade show active" id="reporting" role="tabpanel">
+                <div class="d-flex align-items-center mb-3 gap-3">
+                  <div>
+                    <span class="badge reporting-bg rounded-2 p-2 mt-1">
+                      <i class="bx bx-bar-chart fs-3 lh-1"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <h5 class="mb-0">
+                      <span class="align-middle">گزارش‌گیری</span>
+                    </h5>
+                    <span class="lh-1-85">در این بخش، شما می‌توانید از داده‌های خود، گزارش های متنوعی بگیرید و اطلاعات خود را تجزیه، تحلیل و حتی بایگانی کنید.</span>
+                  </div>
+                </div>
+                <div id="accordionReporting" class="accordion accordion-header-primary">
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#accordionReporting-1" aria-controls="accordionReporting-1">
+                        فیلتر کردن داده‌ها
+                      </button>
+                    </h2>
+
+                    <div id="accordionReporting-1" class="accordion-collapse collapse" style="">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionReporting-2" aria-controls="accordionReporting-2">
+                        دریافت خروجی اکسل
+                      </button>
+                    </h2>
+                    <div id="accordionReporting-2" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br><br>
+
+              <!-- Backup -->
+              <div class="tab-pane fade show active" id="backup" role="tabpanel">
+                <div class="d-flex align-items-center mb-3 gap-3">
+                  <div>
+                    <span class="badge backup-bg rounded-2 p-2 mt-1">
+                      <i class="bx bx-data fs-3 lh-1"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <h5 class="mb-0">
+                      <span class="align-middle">پشتیبان‌گیری</span>
+                    </h5>
+                    <span class="lh-1-85">در این بخش، شما می‌توانید از داده های خود نسخه‌ی پشتیبان تهیه کنید و از اطلاعات خود محافظت کنید.</span>
+                  </div>
+                </div>
+                <div id="accordionBackup" class="accordion accordion-header-primary">
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#accordionBackup-1" aria-controls="accordionBackup-1">
+                        دریافت نسخه‌ی پشتیبان
+                      </button>
+                    </h2>
+
+                    <div id="accordionBackup-1" class="accordion-collapse collapse" style="">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionBackup-2" aria-controls="accordionBackup-2">
+                        پیگیری و مشاهده‌ی نسخه‌های گرفته شده
+                      </button>
+                    </h2>
+                    <div id="accordionBackup-2" class="accordion-collapse collapse">
+                      <div class="accordion-body lh-2">
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br>
+            </div>
+        </div>
+    </div>
+
+
+        <div class="tab-pane fade" id="getting-started-guide" role="tabpanel">
+          <div class="row overflow-hidden">
+                <div class="col-12">
+                  <ul class="timeline timeline-center mt-5 mb-0">
+                    <li class="timeline-item mb-md-4 mb-5">
+                      <span class="timeline-indicator timeline-indicator-info" data-aos="zoom-in" data-aos-delay="200">
+                        <i class="bx bx-credit-card"></i>
+                      </span>
+                      <div class="timeline-event card p-0" data-aos="fade-right">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                          <h6 class="card-title mb-0 mt-n1">تعریف کارت‌های بانکی</h6>
+                          <div class="meta primary-font mt-n1">
+                            <a href="{% url 'cards' %}">
+                              <span class="badge rounded-pill bg-label-info">صفحه‌ی کارت‌های بانکی</span>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <p class="mb-2">
+                            اولین قدم اضافه کردن <b>کارت‌های بانکی</b> است.
+                          </p>
+                          <div class="row justify-content-center mb-2 mt-2">
+                            <img src="{% static 'assets/img/guide/start-card.svg' %}" style="width: 70%">
+                          </div>
+                          <p class="mb-2">
+                            با اضافه کردن کارت‌های بانکی، شما می‌توانید تراکنش‌های خود را نسبت به حساب/کارت‌های بانکیتان ثبت کنید تا به این صورت موجودی حساب های شما مدیریت شود و مبدا و مقصد تراکنش‌هایتان مشخص و شفاف باشد.
+                          </p>
+                          <br>
+                          <small class="text-muted">برای کسب راهنمایی و اطلاعات بیشتر به قسمت <b class="text-primary">راهنمای صفحات - کارت‌های بانکی</b> مراجعه کنید.</small>
+                        </div>
+                        <div class="timeline-event-time">
+                          اولین مرحله
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="timeline-item mb-md-4 mb-5">
+                      <span class="timeline-indicator timeline-indicator-success" data-aos="zoom-in" data-aos-delay="200">
+                        <i class="bx bx-category"></i>
+                      </span>
+                      <div class="timeline-event card p-0" data-aos="fade-right">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                          <h6 class="card-title mb-0 mt-n1">تعریف دسته‌بندی‌ها</h6>
+                          <div class="meta primary-font mt-n1">
+                            <a href="{% url 'categories' %}">
+                              <span class="badge rounded-pill bg-label-success">صفحه‌ی دسته‌بندی‌ها</span>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <p class="mb-2">
+                            قدم بعدی تعریف <b>دسته‌بندی‌های</b> است.
+                          </p>
+                          <div class="row justify-content-center mb-2 mt-2">
+                            <img src="{% static 'assets/img/guide/start-category.svg' %}" style="width: 70%">
+                          </div>
+                          <p class="mb-2">
+                            دسته‌بندی‌ها به شما کمک می‌کنند تا تراکنش‌های خود را طبقه‌بندی کنید و نسبت به دسته‌های مختلف، تراکنش‌هایی را که ثبت کرده‌اید را فیلتر کنید و گزارش‌های دقیق‌تری دریافت کنید. به طور کلی با دسته‌بندی کردن هر تراکنش به یک دسته‌ی خاص، شما می‌توانید داده‌های مالی خود را منظم و شفاف تر نگه‌داری کنید.
+                          </p>
+                          <p class="mb-2 mt-3">
+                            <b>به طور مثال:</b> با ایجاد دسته‌بندی <span class="badge rounded-pill bg-label-warning">مد و پوشاک</span> می‌توانید تمام تراکنش هایی که به این موضوع مرتبط هستند را با این دسته‌بندی ثبت کنید.
+                          </p>
+                          <br>
+                          <small class="text-muted">برای کسب راهنمایی و اطلاعات بیشتر به قسمت <b class="text-primary">راهنمای صفحات - دسته‌بندی‌ها</b> مراجعه کنید.</small>
+                        </div>
+                        <div class="timeline-event-time">
+                          دومین مرحله
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="timeline-item mb-md-4 mb-5">
+                      <span class="timeline-indicator timeline-indicator-warning" data-aos="zoom-in" data-aos-delay="200">
+                        <i class="bx bx-hash"></i>
+                      </span>
+                      <div class="timeline-event card p-0" data-aos="fade-right">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                          <h6 class="card-title mb-0 mt-n1">تعریف تگ‌ها</h6>
+                          <div class="meta primary-font mt-n1">
+                            <a href="{% url 'tags' %}">
+                              <span class="badge rounded-pill bg-label-warning">صفحه‌ی تگ‌ها</span>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <p class="mb-2">
+                            سومین قدم، که می‌تواند یک مرحله‌ی اختیاری باشد، تعریف کردن <b>تگ‌ها</b> است.
+                          </p>
+                          <div class="row justify-content-center mb-2 mt-2">
+                            <img src="{% static 'assets/img/guide/start-tags.svg' %}" style="width: 70%">
+                          </div>
+                          <p class="mb-2">
+                            تگ‌ها، برچسب‌هایی هستند که شما می‌توانید به تراکنش‌هایتان بزنید. تگ‌ها بیانگر جزئیات بیشتری از تراکنش‌ها هستند و می‌توانند در هر دسته‌بندی‌ای قرار بگریند.
+                          </p>
+                          <p class="mb-2 mt-3">
+                            <b>به طور مثال:</b> شما می‌توانید یک تراکنش را با دسته‌بندی <span class="badge rounded-pill bg-label-warning">مد و پوشاک</span> ثبت کنید و همراه با آن از تگ‌هایی ماننده: <span class="badge rounded-pill bg-label-success">کلاه</span>، <span class="badge rounded-pill bg-label-success">کیف</span> و یا <span class="badge rounded-pill bg-label-success">کفش</span> استفاده کنید.
+                          </p>
+
+                          <p class="mb-2 mt-3">
+                            درواقع دسته‌بندی‌ها، یک طبقه‌بندی کلی از تراکنش ها هستند و تگ‌ها یا برچسب ها، اطلاعات و جزئیات دقیق تری از تراکنش خاصی در یک دسته‌بندی به‌خصوص را ارائه می‌دهند.
+                          </p>
+                          <br>
+                          <small class="text-muted">برای کسب راهنمایی و اطلاعات بیشتر به قسمت <b class="text-primary">راهنمای صفحات - تگ‌ها</b> مراجعه کنید.</small>
+                        </div>
+                        <div class="timeline-event-time">
+                          سومین مرحله
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="timeline-item mb-md-4 mb-5">
+                      <span class="timeline-indicator timeline-indicator-danger" data-aos="zoom-in" data-aos-delay="200">
+                        <i class="bx bx-dollar"></i>
+                      </span>
+                      <div class="timeline-event card p-0" data-aos="fade-right">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                          <h6 class="card-title mb-0 mt-n1">اضافه کردن تراکنش</h6>
+                          <div class="meta primary-font mt-n1">
+                            <a href="{% url 'transactions' %}">
+                              <span class="badge rounded-pill bg-label-danger">صفحه‌ی تراکنش‌ها</span>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <p class="mb-2">
+                            حالا که همه چیز آماده است، نوبت به وارد کردن <b>تراکنش‌ها</b> می‌رسد.
+                          </p>
+                          <div class="row justify-content-center mb-2 mt-2">
+                            <img src="{% static 'assets/img/guide/start-transaction.svg' %}" style="width: 65%">
+                          </div>
+                          <p class="mb-2">
+                            بعد از تعریف کارت‌های بانکی، دسته‌بندی‌ها و تگ‌ها، حالا همه چیز آماده است که شروع به ثبت تراکنش‌های خود کنید. شما باید تراکنش‌های خود را ترجیحا به صورت روزانه وارد کنید تا داده‌های مالیتان ثبت شود و امکان گزارش گیری و تجزیه و تحلیل هزینه‌ها، درآمدها و انتقال های مربوط به حساب‌های بانکیتان فراهم شود.
+                          </p>
+                          <br>
+                          <small class="text-muted">برای کسب راهنمایی و اطلاعات بیشتر به قسمت <b class="text-primary">راهنمای صفحات - تراکنش‌ها</b> مراجعه کنید.</small>
+                        </div>
+                        <div class="timeline-event-time">
+                          چهارمین مرحله
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="timeline-item mb-md-4 mb-5">
+                      <span class="timeline-indicator timeline-indicator-primary" data-aos="zoom-in" data-aos-delay="200">
+                        <i class="bx bx-question-mark"></i>
+                      </span>
+                      <div class="timeline-event card p-0" data-aos="fade-right">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                          <h6 class="card-title mb-0 mt-n1">راهنمای صفحات</h6>
+                          <div class="meta primary-font mt-n1">
+                            <a href="{% url 'guide' %}">
+                              <span class="badge rounded-pill bg-label-primary">راهنمای صفحات</span>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <p class="mb-2">
+                            اینجا آخرین مرحله نیست!
+                          </p>
+                          <div class="row justify-content-center mb-2 mt-2">
+                            <img src="{% static 'assets/img/guide/start-guide.svg' %}" style="width: 70%">
+                          </div>
+                          <p class="mb-2">
+                            برای کسب اطلاعات بیشتر و دریافت راهنمای استفاده از دیگر صفحات و بخش‌های برنامه مثل: <span class="badge rounded-pill bg-label-info">سرمایه‌گذاری طلا</span>، <span class="badge rounded-pill bg-label-info">گزارش‌گیری</span> و <span class="badge rounded-pill bg-label-info">پشتیبان‌گیری</span>، می‌توانید با مراجعه‌ به بخش راهنمای صفحات و سپس بخش موردنظر، اطلاعات لازم را کسب کنید.
+                          </p>
+                          <p class="mb-2 mt-3">
+                            همچنین برای دریافت راهنما و اطلاعات بیشتر درباره‌ی برنامه‌ی <span class="badge rounded-pill bg-label-danger">راه‌انداز (لانچر)</span> می‌توانید به بخش مربوطه از قسمت بالایی صفحه‌ی راهنما مراجعه کنید.
+                          </p>
+                        </div>
+                        <div class="timeline-event-time">
+                          پنجمین مرحله
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="launcher-guide" role="tabpanel">
+          <div class="row overflow-hidden">
+                <div class="col-12">
+                </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
