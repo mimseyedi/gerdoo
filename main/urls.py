@@ -32,6 +32,13 @@ from .views.categories import (
     add_category_ajax,
     get_category_transactions_ajax,
 )
+# Tags
+from .views.tags import (
+    tags,
+    get_all_tags,
+    add_tag_ajax,
+    delete_tag_ajax,
+)
 
 
 urlpatterns = [
@@ -61,4 +68,10 @@ urlpatterns = [
     path('categories/data/', get_filtered_categories_ajax, name='get_filtered_categories_ajax'),
     path('categories/add/', add_category_ajax, name='add_category_ajax'),
     path('categories/transactions/data/', get_category_transactions_ajax, name='get_category_transactions_ajax'),
+
+    # Tags
+    path('tags', tags, name='tags'),
+    path('get_all_tags/', get_all_tags, name='get_all_tags'),
+    path('tags/add/', add_tag_ajax, name='add_tag_ajax'),
+    path('tags/delete/', delete_tag_ajax, name='delete_tag_ajax'),
 ]
