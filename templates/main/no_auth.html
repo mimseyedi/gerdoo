@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}دسترسی وجود ندارد | گردو{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/vendor/css/pages/page-misc.css' %}">
+{% endblock %}
+
+{% block menu %}{% endblock menu %}
+{% block loc %}{% endblock loc %}
+
+{% block content %}
+<div class="container-xxl container-p-y">
+    <div class="misc-wrapper">
+        <h1 class="mb-2 mx-2 secondary-font text-danger">شما مجاز نیستید!</h1>
+        <p class="mb-4 mx-2">شما مجوز دسترسی به این صفحه را ندارید. ابتدا وارد شوید.</p>
+        <a href="{% url 'login' %}" class="btn btn-primary">بازگشت به صفحه ورود</a>
+        <div class="mt-5">
+          <img src="{% static 'assets/img/illustrations/access_denied.png' %}" alt="page-misc-not-authorized-light" width="600" class="img-fluid" >
+        </div>
+    </div>
+</div>
+{% endblock %}
