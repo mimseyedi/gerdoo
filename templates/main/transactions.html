@@ -1,0 +1,1009 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}تراکنش ها | گردو{% endblock title %}
+
+{% block loc %}{% endblock loc %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/vendor/libs/flatpickr/flatpickr.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/transactions-page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid flex-grow-1 container-p-y">
+    <div class="card">
+      <div class="card-header d-flex justify-content-start align-items-center flex-wrap">
+        <div class="d-flex flex-column align-items-start">
+            <h4 class="heading-color mb-1">
+                لیست تراکنش ها
+                <small class="text-muted" style="margin-right: 5px" id="transaction-count-display">({{ total }} مورد)</small>
+            </h4>
+            <div id="add-transaction-btn-container" style="padding-top: 5px; position: relative; z-index: 100;">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm waves-effect waves-light fs-6"
+                data-bs-toggle="modal"
+                data-bs-target="#addNewAddress"> <i class='bx bx-plus me-1'></i>
+                تراکنش جدید
+              </button>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center ms-auto me-auto mb-0 mt-5">
+            <select id="month-filter-select" class="form-select form-select-sm" style="width: 160px; margin-left: 10px;" autocomplete="off">
+                {% for index, name in MONTHS_NAME.items %}
+                    <option value="{{ index }}" {% if index == current_month_index %}selected{% endif %}>
+                        {{ name }} / {{ current_year | format_persian_numbers }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button id="apply-month-filter-btn" class="btn btn-primary btn-sm waves-effect waves-light fs-6">
+                <i class='bx bx-filter me-1'></i> اعمال فیلتر
+            </button>
+        </div>
+
+        <div style="width: 250px;"></div>
+
+    </div>
+        <div class="p-4 table-responsive">
+            {% if transactions %}
+            <table class="datatables-basic table dt-column-search table border-top dataTable" id="transactions-table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-center "></th>
+                        <th style="display:none;">شناسه</th>
+                        <th class="text-center ">نوع</th>
+                        <th class="text-center">مبلغ (ریال)</th>
+                        <th class="text-center ">روز</th>
+                        <th class="text-center ">ماه</th>
+                        <th class="text-center ">سال</th>
+                        <th class="text-center">دسته</th>
+                        <th class="text-center ">مبدا</th>
+                        <th class="text-center ">مقصد</th>
+                        <th class="">توضیحات</th>
+                        <th class="text-center ">تگ‌ها</th>
+                        <th class="text-center">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr class="{% if t.kind == 'درآمد' %}table-success fw-bold{% elif t.kind == 'هزینه' %}table-danger fw-bold{% elif t.kind == 'انتقال' %}table-primary fw-bold{% else %}table-dark fw-bold{% endif %}"
+                        data-source-balance="{{ t.source_balance_after }}"
+                        data-destination-balance="{{ t.destination_balance_after }}">
+
+                        <td class="dt-control text-center"></td>
+                        <td style="display:none;">{{ t.id }}</td>
+                        <td class="text-center">{{ t.kind }}</td>
+                        <td class="text-center fw-bolder">{{ t.amount_display }}</td>
+                        <td class="text-center">{{ t.day }}</td>
+                        <td class="text-center">{{ t.month }}</td>
+                        <td class="text-center">{{ t.year }}</td>
+                        <td class="text-center">{{ t.category_name }}</td>
+                        <td class="text-center nowrap-cell">
+                            {% if t.source_card %}
+                                {{ t.source_card }}
+                            {% else %}
+                                <small class="text-secondary"><em>نامشخص</em></small>
+                            {% endif %}
+                        </td>
+                        <td class="text-center nowrap-cell">
+                            {% if t.destination_card %}
+                                {{ t.destination_card }}
+                            {% else %}
+                                <small class="text-secondary"><em>نامشخص</em></small>
+                            {% endif %}
+                        </td>
+                        <td class="large-col">{{ t.description }}</td>
+                        <td class="text-center">
+                            {% for tag in t.tags %}
+                                <span class="badge bg-success me-1">{{ tag }}</span>
+                                {% empty %}
+                                <small class="text-muted">ندارد</small>
+                            {% endfor %}
+                        </td>
+                        <td></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="text-center">هیچ تراکنشی ثبت نشده است.</td> </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <h5 class="text-center text-muted">هیچ تراکنشی تا به اینجا ثبت نشده است!</h5>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">تأیید حذف تراکنش</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <i class='bx bx-error-circle text-danger' style="font-size: 3rem;"></i>
+                <h5 class="mt-3">آیا مطمئن هستید؟</h5>
+                <i class="bx bx-error text-danger"></i>
+                <small class="fw-bold text-danger fs-12">این عمل غیرقابل بازگشت است و موجودی حساب‌های مربوطه به‌روزرسانی خواهند شد!</small>
+                <div class="alert alert-warning p-2 text-start mt-4">
+                    <p class="mb-1">
+                        <i class="bx bx-at me-1"></i>
+                        شناسه: <span id="modal-detail-id" class="fw-bold"></span>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bx bx-flag me-1"></i>
+                        نوع: <span id="modal-detail-kind" class="fw-bold"></span>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bx bx-calendar me-1"></i>
+                        تاریخ: <span id="modal-detail-date" class="fw-bold"></span>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bx bx-dollar me-1"></i>
+                        مبلغ: <span id="modal-detail-amount" class="fw-bold"></span>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bx bx-category me-1"></i>
+                        دسته‌بندی: <span id="modal-detail-category" class="fw-bold"></span>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bx bx-credit-card me-1"></i>
+                        حساب مبداء: <span id="modal-detail-source" class="fw-bold"></span>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bx bx-credit-card me-1"></i>
+                        حساب مقصد: <span id="modal-detail-destination" class="fw-bold"></span>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bx bx-text me-1"></i>
+                        توضیحات: <span id="modal-detail-description" class="fw-bold"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">انصراف</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">بله، حذف کن!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addNewAddress" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-simple modal-add-new-address modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="text-center mb-4 mt-0 mt-md-n2">
+                    <h3 class="address-title secondary-font">افزودن تراکنش جدید</h3>
+                    <p class="address-subtitle">جزئیات تراکنش جدید خود را وارد و ثبت کنید.</p>
+                </div>
+                <br><br>
+                <form id="addNewAddressForm" class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" onsubmit="return false" novalidate="novalidate">
+                    {% csrf_token %}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="transactionKind">نوع تراکنش</label>
+                        <select id="transactionKind" name="kind" class="form-select">
+                            <option value="I">درآمد</option>
+                            <option value="E" selected>هزینه</option> <option value="T">انتقال</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 fv-plugins-icon-container">
+                        <label class="form-label" for="transactionAmount">مبلغ (ریال)</label>
+                        <input type="text" id="transactionAmount" name="amount" class="form-control text-start" placeholder="مثال: 1,500,000" dir="ltr">
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                        <div id="amountInWordsLabel" class="mt-2 text-primary small d-none" style="text-align: right;">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="transactionSource">حساب مبدأ</label>
+                        <select id="transactionSource" name="source" class="form-select">
+                            <option value="">انتخاب کنید (نامشخص)</option>
+                            {% for card in cards %}
+                                <option value="{{ card.id }}">{{ card.get_name_display }} - {{ card.owner }} - {{ card.number | format_card_number_last4 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="transactionDestination">حساب مقصد</label>
+                        <select id="transactionDestination" name="destination" class="form-select">
+                            <option value="">انتخاب کنید (نامشخص)</option>
+                            {% for card in cards %}
+                                <option value="{{ card.id }}">{{ card.get_name_display }} - {{ card.owner }} - {{ card.number | format_card_number_last4 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="transactionCategory">دسته‌بندی</label>
+                        <select id="transactionCategory" name="category" class="form-select" required>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="transactionDate">تاریخ تراکنش</label>
+                        <input type="text" class="form-control" id="transactionDate" name="date" placeholder="انتخاب تاریخ">
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+
+                    <div class="col-12 col-md-6 fv-plugins-icon-container" id="commission-field-container">
+                        <label class="form-label" for="transactionCommission">کارمزد (ریال)</label>
+                        <input type="text" id="transactionCommission" name="commission" class="form-control text-start" placeholder="مثال: 20,000" dir="ltr" disabled>
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <label class="form-label" for="tagPicker">تگ‌ها (اختیاری)</label>
+
+                        <input type="hidden" id="transactionTagsHidden" name="tags" value="">
+
+                        <div id="selectedTagsBox" class="border p-2 rounded mb-3" style="min-height: 46px; background-color: #f8f9fa;">
+                            <span class="text-muted small">تگ‌های انتخاب شده در اینجا نمایش داده می‌شوند...</span>
+                        </div>
+
+                        <div id="availableTagsContainer" class="border p-2 rounded" style="min-height: 46px; max-height: 150px; overflow-y: auto;">
+                            <span class="text-secondary">در حال بارگذاری تگ‌ها...</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label" for="transactionDescription">توضیحات</label>
+                        <textarea id="transactionDescription" name="description" class="form-control" rows="2" placeholder="توضیحات در مورد تراکنش" required></textarea>
+                    </div>
+
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-success me-sm-3 me-1">ثبت تراکنش</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal" aria-label="Close">
+                            انصراف
+                        </button>
+                    </div>
+                <input type="hidden"></form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block page_js %}
+<script src="{% static 'assets/vendor/libs/flatpickr/flatpickr.js' %}"></script>
+<script src="{% static 'assets/vendor/libs/jdate/jdate.js' %}"></script>
+<script src="{% static 'assets/vendor/libs/flatpickr/flatpickr-jdate.js' %}"></script>
+<script src="{% static 'assets/vendor/libs/flatpickr/l10n/fa-jdate.js' %}"></script>
+<script src="{% static 'assets/js/persian_datepicker_config.js' %}"></script>
+<script>
+  let transactionDatePicker;
+  $(document).ready(function() {
+    const todayJalali = '{{ today_jalali }}';
+    transactionDatePicker = initializeJalaliDatePicker('transactionDate', todayJalali);
+});
+</script>
+<script src="{% static 'assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js' %}"></script>
+<script src="{% static 'assets/vendor/libs/datatables-bs5/i18n/fa.js' %}"></script>
+<script src="{% static 'assets/js/transactions-datatable.js' %}"></script>
+<script>
+  $(document).ready(function() {
+      const postUrl = "{% url 'add_transaction' %}";
+      const getCategoriesUrl = "{% url 'get_categories_by_kind' %}";
+      const getAllTagsUrl = "{% url 'get_all_tags' %}";
+      const getTransactionsByMonthUrl = "{% url 'get_transactions_by_month' %}";
+      const deleteUrl = "{% url 'delete_transaction' %}";
+      const detailsUrl = "{% url 'get_transaction_details' %}";
+
+      // CSRF Token
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+
+      let transactionsDataTable = null;
+      let allAvailableTags = [];
+
+      function numberToWordsFA(num) {
+          // (تابع numberToWordsFA شما در اینجا قرار می‌گیرد)
+          const units = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
+          const tens = ["", "ده", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
+          const teens = ["ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
+          const hundreds = ["", "یکصد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد"];
+          const thousands = ["", "هزار", "میلیون", "میلیارد", "بیلیون", "بیلیارد"];
+
+          function convertThreeDigit(n) {
+              if (n === 0) return "";
+              let s = "";
+              let h = Math.floor(n / 100);
+              let t = n % 100;
+
+              if (h > 0) s += hundreds[h];
+
+              if (t > 0) {
+                  if (s.length > 0) s += " و ";
+                  if (t < 10) {
+                      s += units[t];
+                  } else if (t >= 10 && t < 20) {
+                      s += teens[t - 10];
+                  } else {
+                      s += tens[Math.floor(t / 10)];
+                      let u = t % 10;
+                      if (u > 0) s += " و " + units[u];
+                  }
+              }
+              return s;
+          }
+
+          let rawAmount = num.replace(/,/g, '');
+          if (!rawAmount || isNaN(parseInt(rawAmount))) return "";
+
+          let toman = Math.floor(parseInt(rawAmount) / 10);
+          if (toman === 0) return "";
+
+          let i = 0;
+          let words = "";
+
+          do {
+              let n = toman % 1000;
+              if (n !== 0) {
+                  let s = convertThreeDigit(n);
+                  if (words.length > 0) words = s + " " + thousands[i] + " و " + words;
+                  else words = s + " " + thousands[i] + words;
+              }
+              toman = Math.floor(toman / 1000);
+              i++;
+          } while (toman > 0);
+
+          words = words.trim().replace(/^و\s*/, '').replace(/\s*و\s*$/, '');
+
+          return words + " تومان";
+      }
+
+      function clearValidationErrors() {
+          $('.is-invalid').removeClass('is-invalid');
+          $('.invalid-feedback.d-block').remove();
+      }
+
+      function handleValidationErrors(errors) {
+          clearValidationErrors();
+
+          let errorSummary = 'خطاهای زیر مانع از ثبت تراکنش شدند: <br><br><ul>';
+          let hasError = false;
+
+          for (const fieldName in errors) {
+              const errorMessage = errors[fieldName];
+              hasError = true;
+              errorSummary += `<li>${errorMessage}</li>`;
+
+              const inputElementId = '#transaction' + fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+              const inputElement = $(inputElementId);
+
+              if (inputElement.length) {
+                  inputElement.addClass('is-invalid');
+
+                  if (inputElement.next('.invalid-feedback').length === 0) {
+                       inputElement.after(`<div class="invalid-feedback d-block">${errorMessage}</div>`);
+                  }
+              }
+          }
+
+          errorSummary += '</ul>';
+
+          if (hasError) {
+              Swal.fire({
+                  title: 'خطای ثبت تراکنش',
+                  html: errorSummary,
+                  icon: 'error',
+                  confirmButtonText: 'متوجه شدم',
+                  customClass: {
+                      confirmButton: 'btn btn-danger',
+                      htmlContainer: 'text-right'
+                  },
+                  buttonsStyling: false
+              });
+          }
+      }
+
+      function initializeDataTable() {
+          var dt_transactions_table = $('#transactions-table');
+
+          if ($.fn.DataTable.isDataTable('#transactions-table')) {
+              dt_transactions_table.DataTable().destroy();
+              $('#transactions-table thead tr.dt-search-row').remove();
+          }
+
+          transactionsDataTable = dt_transactions_table.DataTable({
+              paging: false,
+              orderCellsTop: true,
+              destroy: true,
+              "order": [
+                  [ 4, "desc" ]
+              ],
+              dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>><"table-responsive"t><"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+              "language": { "url": "{% static 'assets/vendor/libs/datatables-bs5/i18n/fa.json' %}" },
+
+              columnDefs: [
+                  {
+                      targets: 0,
+                      orderable: false,
+                      className: 'dt-control',
+                      searchable: false,
+                      data: null,
+                      defaultContent: '',
+                      title: 'جزئیات',
+                  },
+                  {
+                      targets: 1,
+                      visible: false,
+                      searchable: true
+                  },
+                  {
+                      targets: 12,
+                      orderable: false,
+                      searchable: false,
+                      data: null,
+                      render: function (data, type, row) {
+                           const transactionId = row[1];
+                           return `
+                               <button
+                                   type="button"
+                                   class="btn btn-icon btn-text-danger delete-transaction-btn"
+                                   data-transaction-id="${transactionId}"
+                                   title="حذف تراکنش">
+                                   <i class='bx bx-trash'></i>
+                               </button>`;
+                      }
+                  }
+              ],
+
+              initComplete: function () {
+                  var api = this.api();
+                  var tableHeader = $(api.table().header());
+
+                  tableHeader.find('.dt-search-row').remove();
+
+                  var searchRow = $('<tr class="dt-search-row">').appendTo(tableHeader);
+
+                  api.columns().every(function (colIdx) {
+                      var column = this;
+                      var title = $(column.header()).text().trim();
+                      var cell = $('<th>').appendTo(searchRow);
+
+                      if (colIdx === 0 || title === 'عملیات' || title === 'اقدامات' || title === '') {
+                          cell.text('');
+                          return;
+                      }
+
+                      if (colIdx === 1) {
+                          cell.css('display', 'none');
+                          return;
+                      }
+
+                      var input = $('<input type="text" class="form-control" placeholder="جستجوی ' + title + '" />')
+                          .appendTo(cell)
+                          .on('click', function(e) {
+                              e.stopPropagation();
+                          });
+
+                      if (title.includes('مبلغ') || title.includes('روز') || title.includes('سال')) {
+                          input.on('keypress', function(e) {
+                              if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
+                                  (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                                  (e.keyCode >= 35 && e.keyCode <= 40)) {
+                                  return;
+                              }
+                              if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                                  e.preventDefault();
+                              }
+                          });
+                      }
+
+                      input.on('keyup change', function () {
+                          var searchValue = this.value;
+                          if (title.includes('مبلغ')) {
+                              searchValue = searchValue.replace(/[^0-9]/g, '');
+                          }
+
+                          if (column.search() !== searchValue) {
+                              column.search(searchValue).draw();
+                          }
+                      });
+                  });
+              }
+          });
+
+          $('#transactions-table tbody').off('click', 'td.dt-control').on('click', 'td.dt-control', function () {
+              var tr = $(this).closest('tr');
+              var row = transactionsDataTable.row(tr);
+
+              if (tr.hasClass('shown')) {
+                  tr.next('tr.detail-row').remove();
+                  tr.removeClass('shown');
+              } else {
+                  const detailHTML = buildDetailRowHTML(row.data(), tr[0]);
+                  tr.after(detailHTML);
+                  tr.addClass('shown');
+              }
+          });
+      }
+
+      function redrawTable(transactions, total) {
+          if (!transactionsDataTable) {
+              initializeDataTable();
+          }
+
+          transactionsDataTable.clear().draw();
+
+          if (transactions && transactions.length > 0) {
+              transactions.forEach(t => {
+                  let tagsHtml = '';
+                  if (t.tags && t.tags.length > 0) {
+                      tagsHtml = t.tags.map(tag =>
+                          `<span class="badge bg-success me-1">${tag}</span>`
+                      ).join('');
+                  } else {
+                      tagsHtml = '<small class="text-muted">ندارد</small>';
+                  }
+
+                  let rowData = [
+                      '', // dt-control
+                      t.id, // id (hidden)
+                      t.kind,
+                      t.amount_display,
+                      t.day,
+                      t.month,
+                      t.year,
+                      t.category_name || 'نامشخص',
+                      t.source_card || 'نامشخص',
+                      t.destination_card || 'نامشخص',
+                      t.description,
+                      tagsHtml,
+                      ''
+                  ];
+
+                  let newRow = transactionsDataTable.row.add(rowData).draw(false).node();
+
+                  let rowClass = '';
+                  if (t.kind === 'درآمد') { rowClass = 'table-success fw-bold'; }
+                  else if (t.kind === 'هزینه') { rowClass = 'table-danger fw-bold'; }
+                  else if (t.kind === 'انتقال') { rowClass = 'table-primary fw-bold'; }
+                  else { rowClass = 'table-dark fw-bold'; }
+
+                  $(newRow).addClass(rowClass);
+                  $(newRow).attr('data-source-balance', t.source_balance_after);
+                  $(newRow).attr('data-destination-balance', t.destination_balance_after);
+              });
+
+              transactionsDataTable.columns.adjust().draw();
+
+          } else {
+              // در این حالت، DataTables به صورت خودکار پیام "داده‌ای برای نمایش وجود ندارد" را نشان می‌دهد.
+          }
+
+          $('#transaction-count-display').text(`(${total} مورد)`);
+      }
+
+      function applyMonthFilter() {
+          const selectedMonth = $('#month-filter-select').val();
+          const selectedYearText = $('#month-filter-select option:selected').text();
+          const selectedYear = selectedYearText.split(' / ')[1].trim();
+
+          $('#apply-month-filter-btn').prop('disabled', true).html("<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span> بارگذاری...");
+
+          $.ajax({
+              url: getTransactionsByMonthUrl,
+              type: 'GET',
+              data: { 'month': selectedMonth, 'year': selectedYear },
+              dataType: 'json',
+              headers: { 'X-Requested-With': 'XMLHttpRequest' },
+              success: function(response) {
+                  if (response.transactions) {
+                      redrawTable(response.transactions, response.total);
+                  } else {
+                      console.error('داده‌ای دریافت نشد.');
+                  }
+              },
+              error: function(xhr) {
+                   Swal.fire({
+                      title: "خطا در فیلتر!",
+                      text: "خطایی هنگام دریافت تراکنش‌ها رخ داد: " + (xhr.responseJSON?.error || xhr.status),
+                      icon: "error",
+                      customClass: { confirmButton: 'btn btn-danger' },
+                      buttonsStyling: false
+                  });
+              },
+              complete: function() {
+                  $('#apply-month-filter-btn').prop('disabled', false).html("<i class='bx bx-filter me-1'></i> اعمال فیلتر");
+              }
+          });
+      }
+
+      $('#apply-month-filter-btn').on('click', applyMonthFilter);
+
+      var transactionAmountCleave = new Cleave('#transactionAmount', {
+          numeral: true, numeralThousandsGroupStyle: 'thousand', numeralDecimalMark: '', delimiter: ',', stripLeadingZeroes: true
+      });
+      var transactionCommissionCleave = new Cleave('#transactionCommission', {
+          numeral: true, numeralThousandsGroupStyle: 'thousand', numeralDecimalMark: '', delimiter: ',', stripLeadingZeroes: true
+      });
+
+      $('#transactionAmount').on('input', function() {
+          const $input = $(this);
+          const $label = $('#amountInWordsLabel');
+          const rawValue = transactionAmountCleave.getRawValue();
+
+          if (rawValue && parseInt(rawValue) > 0) {
+              const words = numberToWordsFA(rawValue);
+              $label.text(words).removeClass('d-none');
+          } else {
+              $label.addClass('d-none').text('');
+          }
+      });
+
+      function updateCategoriesDropdown(kind) {
+          const $categorySelect = $('#transactionCategory');
+          $categorySelect.empty().append('<option value="">انتخاب کنید</option>').prop('disabled', false);
+
+          $.ajax({
+              url: getCategoriesUrl,
+              type: 'GET',
+              data: { 'kind': kind },
+              dataType: 'json',
+              success: function(response) {
+                  if (response.categories && response.categories.length) {
+                      $.each(response.categories, function(index, category) {
+                          $categorySelect.append($('<option>', {
+                              value: category.id,
+                              text: category.name
+                          }));
+                      });
+                  } else {
+                      $categorySelect.append('<option value="" disabled>دسته بندی یافت نشد</option>');
+                  }
+              },
+              error: function() {
+                  console.error("خطا در دریافت دسته‌بندی‌ها.");
+              }
+          });
+      }
+
+      // توابع Tag Picker
+      function loadAvailableTags() {
+          $.ajax({
+              url: getAllTagsUrl,
+              type: 'GET',
+              dataType: 'json',
+              success: function(response) {
+                  allAvailableTags = response.tags || [];
+                  renderAvailableTags();
+              },
+              error: function() {
+                  $('#availableTagsContainer').html('<span class="text-danger small">خطا در بارگذاری تگ‌ها.</span>');
+              }
+          });
+      }
+
+      function renderAvailableTags() {
+          const $container = $('#availableTagsContainer');
+          $container.empty();
+
+          if (allAvailableTags.length) {
+              allAvailableTags.forEach(tag => {
+                  const $tagBadge = $('<span>', {
+                      class: 'badge bg-label-danger tag-item available-tag',
+                      'data-tag-id': tag.id,
+                      text: tag.name,
+                      style: 'cursor: pointer; margin-right: 5px; margin-bottom: 5px; transition: all 0.2s;'
+                  });
+                  $container.append($tagBadge);
+              });
+          } else {
+              $container.html('<span class="text-muted small">هیچ تگی وجود ندارد.</span>');
+          }
+      }
+
+      function updateSelectedTags() {
+          const $selectedBox = $('#selectedTagsBox');
+          const selectedIds = [];
+
+          $selectedBox.find('.tag-item').each(function() {
+              selectedIds.push($(this).data('tag-id'));
+          });
+
+          if (selectedIds.length === 0) {
+              if ($selectedBox.find('.text-muted').length === 0) {
+                   $selectedBox.html('<span class="text-muted small">تگ‌های انتخاب شده در اینجا نمایش داده می‌شوند...</span>');
+              }
+          }
+
+          $('#transactionTagsHidden').val(selectedIds.join(','));
+      }
+
+      function initializeTagPickerEvents() {
+          const $availableContainer = $('#availableTagsContainer');
+          const $selectedBox = $('#selectedTagsBox');
+
+          $availableContainer.off('click', '.available-tag').on('click', '.available-tag', function() {
+              const $clickedTag = $(this);
+              $clickedTag.removeClass('bg-label-danger available-tag').addClass('bg-success selected-tag');
+
+              if ($selectedBox.find('.text-muted').length) {
+                  $selectedBox.empty();
+              }
+              $selectedBox.append($clickedTag);
+
+              if ($availableContainer.is(':empty') || $availableContainer.find('.tag-item').length === 0) {
+                  renderAvailableTags();
+              }
+
+              updateSelectedTags();
+          });
+
+          $selectedBox.off('click', '.selected-tag').on('click', '.selected-tag', function() {
+              const $clickedTag = $(this);
+              $clickedTag.removeClass('bg-success selected-tag').addClass('bg-label-danger available-tag');
+
+              const $availableContainer = $('#availableTagsContainer');
+              if ($availableContainer.find('.text-muted').length) {
+                  $availableContainer.empty();
+              }
+              $availableContainer.append($clickedTag);
+
+              updateSelectedTags();
+          });
+      }
+
+      function updateModalFields(kind) {
+          const $commissionInput = $('#transactionCommission');
+          const $commissionContainer = $('#commission-field-container');
+
+          if (kind === 'T') {
+              $commissionContainer.show();
+              $commissionInput.prop('disabled', false);
+          } else {
+              $commissionContainer.hide();
+              $commissionInput.prop('disabled', true);
+              $commissionInput.val('');
+              transactionCommissionCleave.setRawValue('');
+
+              const commissionErrors = $commissionInput.closest('.fv-plugins-icon-container').find('.invalid-feedback');
+              $commissionInput.removeClass('is-invalid');
+              commissionErrors.remove();
+          }
+
+          updateCategoriesDropdown(kind);
+      }
+
+      $('#transactionKind').on('change', function() {
+          const selectedKind = $(this).val();
+          updateModalFields(selectedKind);
+      });
+
+
+      $('#addNewAddress').on('shown.bs.modal', function() {
+          const initialKind = $('#transactionKind').val();
+          updateModalFields(initialKind);
+          loadAvailableTags();
+          initializeTagPickerEvents();
+          $('#transactionAmount').trigger('input');
+      });
+
+      $('#addNewAddress').on('hidden.bs.modal', function () {
+          clearValidationErrors();
+          $('#addNewAddressForm').get(0).reset();
+
+          const todayJalali = '{{ today_jalali }}';
+
+          if (transactionDatePicker) {
+              transactionDatePicker.setDate(todayJalali, true);
+          } else {
+              $('#transactionDate').val(todayJalali);
+          }
+
+          $('#transactionSource').val('').trigger('change');
+          $('#transactionDestination').val('').trigger('change');
+          $('#transactionCategory').val('').trigger('change');
+          $('#transactionCategory').prop('disabled', false);
+
+          $('#commission-field-container').hide();
+          $('#transactionCommission').prop('disabled', true);
+          $('#amountInWordsLabel').addClass('d-none').text('');
+
+          $('#availableTagsContainer').empty();
+          $('#selectedTagsBox').html('<span class="text-muted small">تگ‌های انتخاب شده در اینجا نمایش داده می‌شوند...</span>');
+          $('#transactionTagsHidden').val('');
+      });
+
+      $('#addNewAddressForm').submit(function(e) {
+          e.preventDefault();
+          clearValidationErrors();
+
+          var formData = {
+              'kind': $('#transactionKind').val(),
+              'amount': $('#transactionAmount').val(),
+              'commission': $('#transactionCommission').val(),
+              'source': $('#transactionSource').val(),
+              'destination': $('#transactionDestination').val(),
+              'category': $('#transactionCategory').val(),
+              'description': $('#transactionDescription').val(),
+              'tags': $('#transactionTagsHidden').val(),
+              'date': $('#transactionDate').val(),
+          };
+
+          $.ajax({
+              type: 'POST',
+              url: postUrl,
+              data: formData,
+              dataType: 'json',
+              headers: { 'X-CSRFToken': csrftoken },
+              success: function(response) {
+                  if (response.success) {
+                      Swal.fire({
+                          title: "ثبت شد!",
+                          text: "تراکنش شما با موفقیت در سیستم ثبت شد.",
+                          icon: "success",
+                          showConfirmButton: false,
+                          timer: 1500
+                      }).then(function () {
+                          if ($('#month-filter-select').find('option:selected').is('[selected]')) {
+                              applyMonthFilter();
+                          } else {
+                              window.location.reload();
+                          }
+
+                          $('#addNewAddressForm').get(0).reset();
+                          $('#addNewAddress').modal('hide');
+                      });
+
+                  } else {
+                      handleValidationErrors(response.errors);
+                  }
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 400) {
+                      var response = xhr.responseJSON;
+                      if (response && response.errors) {
+                          handleValidationErrors(response.errors);
+                          return;
+                      }
+                  }
+
+                  Swal.fire({
+                      title: "خطای سیستمی!",
+                      text: "خطایی غیرمنتظره در سرور رخ داده است. کد خطا: " + xhr.status,
+                      icon: "error",
+                      customClass: { confirmButton: 'btn btn-danger' },
+                      buttonsStyling: false
+                  });
+              }
+          });
+      });
+
+      let transactionToDeleteId = null;
+      const $deleteModalEl = $('#confirmDeleteModal');
+      let deleteModalInstance;
+
+      $('#transactions-table tbody').off('click', '.delete-transaction-btn').on('click', '.delete-transaction-btn', function() {
+          transactionToDeleteId = $(this).data('transaction-id');
+
+          //Swal.fire({
+              //title: 'در حال دریافت جزئیات...',
+              //icon: 'info',
+              //allowOutsideClick: false,
+              //showConfirmButton: false,
+              //didOpen: () => {
+                  //Swal.showLoading();
+              //}
+          //});
+
+          $.ajax({
+              type: 'GET',
+              url: detailsUrl,
+              data: { 'transaction_id': transactionToDeleteId },
+              dataType: 'json',
+              success: function(response) {
+                  Swal.close();
+
+                  if (response.success && response.details) {
+                      const details = response.details;
+
+                      $('#modal-detail-id').text(details.id);
+                      $('#modal-detail-date').text(details.jalali_date);
+                      $('#modal-detail-kind').text(details.kind);
+                      $('#modal-detail-amount').text(details.amount + ' ریال');
+                      $('#modal-detail-category').text(details.category_name);
+                      $('#modal-detail-source').text(details.source_name);
+                      $('#modal-detail-destination').text(details.destination_name);
+                      $('#modal-detail-description').text(details.description);
+
+                      if (!deleteModalInstance) {
+                          deleteModalInstance = new bootstrap.Modal($deleteModalEl[0]);
+                      }
+                      deleteModalInstance.show();
+
+                  } else {
+                      Swal.fire('خطا', response.errors || 'خطا در دریافت جزئیات تراکنش.', 'error');
+                  }
+              },
+              error: function(xhr) {
+                  Swal.fire('خطا', 'خطای سرور در دریافت جزئیات تراکنش.', 'error');
+              }
+          });
+      });
+
+      $('#confirm-delete-btn').off('click').on('click', function() {
+          if (!transactionToDeleteId) return;
+
+          deleteModalInstance.hide();
+
+          Swal.fire({
+              title: 'در حال حذف...',
+              text: 'لطفاً منتظر بمانید تا موجودی‌ها به‌روز شوند.',
+              icon: 'info',
+              allowOutsideClick: false,
+              showConfirmButton: false,
+              didOpen: () => {
+                  Swal.showLoading();
+              }
+          });
+
+          $.ajax({
+              type: 'POST',
+              url: deleteUrl,
+              data: {
+                  'transaction_id': transactionToDeleteId
+              },
+              dataType: 'json',
+              headers: {
+                  'X-CSRFToken': csrftoken
+              },
+              success: function(response) {
+                  Swal.fire({
+                      title: "حذف شد!",
+                      text: response.message,
+                      icon: "success",
+                      showConfirmButton: false,
+                      timer: 1500
+                  }).then(function () {
+                      window.location.reload();
+                  });
+              },
+              error: function(xhr) {
+                  let errorMsg = 'خطای ناشناخته در سرور.';
+                  if (xhr.responseJSON && xhr.responseJSON.errors) {
+                      errorMsg = xhr.responseJSON.errors;
+                  } else if (xhr.status === 404) {
+                      errorMsg = 'تراکنش مورد نظر پیدا نشد.';
+                  }
+
+                  Swal.fire({
+                      title: 'خطای حذف',
+                      html: errorMsg,
+                      icon: 'error',
+                      confirmButtonText: 'متوجه شدم'
+                  });
+              }
+          }).always(function() {
+              transactionToDeleteId = null;
+          });
+      });
+
+      initializeDataTable();
+  });
+</script>
+{% endblock page_js %}
