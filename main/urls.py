@@ -63,6 +63,10 @@ from .views.backup import (
     backup,
     create_backup,
 )
+# Guide
+from .views.guide import (
+    guide,
+)
 
 
 urlpatterns = [
@@ -118,4 +122,7 @@ urlpatterns = [
     # Backup
     path('backup/', backup, name='backup'),
     path('backup/create/', create_backup, name='create_backup'),
+
+    # Guide
+    path('guide', guide, name='guide'),
 ]
