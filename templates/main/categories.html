@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}دسته‌بندی‌ها | گردو{% endblock title %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container">
+    <div class="row mb-5">
+        <div class="col-12">
+            <button id="addNewCategory" class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addCategoryModal">
+                <i class="bx bx-plus me-1"></i> دسته‌بندی جدید
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-12 col-md-8 mb-3 mb-md-0">
+            <div class="btn-group" role="group" aria-label="Transaction Type Filter">
+                <input type="radio" class="btn-check" name="categoryTypeFilter" id="type_all" value="all" checked>
+                <label class="btn btn-outline-secondary" for="type_all">همه</label>
+
+                <input type="radio" class="btn-check" name="categoryTypeFilter" id="type_I" value="I">
+                <label class="btn btn-outline-success" for="type_I">درآمد</label>
+
+                <input type="radio" class="btn-check" name="categoryTypeFilter" id="type_E" value="E">
+                <label class="btn btn-outline-danger" for="type_E">هزینه</label>
+
+                <input type="radio" class="btn-check" name="categoryTypeFilter" id="type_T" value="T">
+                <label class="btn btn-outline-info" for="type_T">انتقال</label>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-start">
+            <div class="btn-group" role="group" aria-label="Time Filter">
+                <input type="radio" class="btn-check" name="timeFilter" id="time_month" value="month" checked>
+                <label class="btn btn-outline-secondary" for="time_month">{{ jm }}</label>
+
+                <input type="radio" class="btn-check" name="timeFilter" id="time_year" value="year">
+                <label class="btn btn-outline-secondary" for="time_year">{{ jy }}</label>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <h5 class="card-header">لیست دسته‌بندی‌های فیلتر شده</h5>
+        <div class="card-body">
+            <div class="row" id="categoriesListContainer">
+
+                <div class="col-12 text-center text-muted" id="initialLoadingMessage">
+                    در حال بارگذاری دسته‌بندی‌ها...
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalTitle">ایجاد دسته‌بندی جدید</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <form id="addCategoryForm" method="POST" action="{% url 'add_category_ajax' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">نام دسته‌بندی</label>
+                        <input type="text" id="categoryName" name="name" class="form-control" placeholder="مثال: خوراک، مد و پوشاک و ..." required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">نوع دسته‌بندی</label>
+                        <select id="categoryKind" name="kind" class="form-select" required>
+                            <option value="E">هزینه</option>
+                            <option value="I">درآمد</option>
+                            <option value="T">انتقال</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-primary" id="saveCategoryBtn">ذخیره دسته‌بندی</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="viewTransactionsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewTransactionsModalTitle">تراکنش‌های دسته‌بندی: <span id="categoryNameDisplay"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>نوع</th>
+                                <th>مبلغ (ریال)</th>
+                                <th>تاریخ</th>
+                                <th>حساب مبدا</th>
+                                <th>حساب مقصد</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            <tr><td colspan="6" class="text-center text-muted">در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block page_js %}
+<script>
+    const categoriesContainer = document.getElementById('categoriesListContainer');
+    const typeFilters = document.querySelectorAll('input[name="categoryTypeFilter"]');
+    const timeFilters = document.querySelectorAll('input[name="timeFilter"]');
+    const categoriesDataUrl = "{% url 'get_filtered_categories_ajax' %}";
+    const initialModalTitle = 'تراکنش‌های دسته‌بندی';
+
+    function renderCategoryCard(category) {
+
+        const isDisabled = category.transaction_count === 0;
+        const buttonClass = isDisabled ? 'btn-light disabled' : 'btn-outline-secondary view-transactions-btn';
+
+        const cardHtml = `
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 border border-${category.color}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0 text-${category.color}">${category.name}</h5>
+                            <span class="badge bg-label-${category.color}">${category.type_display}</span>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">درصد در کل ${category.type_display}: ${category.percent}٪</small>
+                            <div class="progress" style="height: 8px">
+                                <div class="progress-bar bg-${category.color}" style="width: ${category.percent}%" role="progressbar" aria-valuenow="${category.percent}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <div>
+                                <small class="text-muted d-block">مجموع مبلغ</small>
+                                <h6 class="mb-0">${category.total_amount} <small class="text-muted fs-7">ریال</small></h6>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">تعداد تراکنش</small>
+                                <h6 class="mb-0 text-end">${category.transaction_count}</h6>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="button"
+                                    class="btn btn-sm w-75 ${buttonClass}"
+                                    data-category-id="${category.id}"
+                                    data-category-name="${category.name}"
+                                    ${isDisabled ? 'disabled' : ''} > <i class="bx bx-list-ul me-1"></i> نمایش تراکنش‌ها (${category.transaction_count})
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        return cardHtml;
+    }
+
+    function attachTransactionViewListeners(activeTime) {
+
+        const timeDisplay = activeTime === 'month' ? ' (ماه جاری: {{jm}}/{{jy}})' : ' (سال جاری: {{jy}})';
+
+        document.querySelectorAll('.view-transactions-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const categoryId = this.dataset.categoryId;
+                const categoryName = this.dataset.categoryName;
+
+                const modalElement = document.getElementById('viewTransactionsModal');
+                const modal = new bootstrap.Modal(modalElement);
+
+                const tableBody = document.getElementById('transactionsTableBody');
+
+                document.getElementById('viewTransactionsModalTitle').innerHTML =
+                    `${initialModalTitle}: <span id="categoryNameDisplay">${categoryName}</span><small class="text-muted ms-2">${timeDisplay}</small>`;
+
+                tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted"><div class="spinner-border spinner-border-sm me-2" role="status"></div> در حال بارگذاری تراکنش‌ها...</td></tr>';
+
+                modal.show();
+
+                const transactionsUrl = "{% url 'get_category_transactions_ajax' %}";
+
+                const fetchUrl = `${transactionsUrl}?category_id=${categoryId}&time_filter=${activeTime}`;
+
+                fetch(fetchUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success' && data.transactions.length > 0) {
+                            tableBody.innerHTML = '';
+                            data.transactions.forEach(t => {
+                                let colorClass = 'secondary';
+                                if (t.kind_code === 'E') colorClass = 'danger';
+                                else if (t.kind_code === 'I') colorClass = 'success';
+                                else if (t.kind_code === 'T') colorClass = 'info';
+
+                                tableBody.innerHTML += `
+                                    <tr>
+                                        <td><span class="badge bg-label-${colorClass}">${t.kind_display}</span></td>
+                                        <td class="text-nowrap">${t.amount}</td>
+                                        <td>${t.date}</td>
+                                        <td>${t.source_display}</td>
+                                        <td>${t.destination_display}</td>
+                                        <td>${t.description}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">تراکنشی برای این دسته بندی یافت نشد.</td></tr>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching category transactions:', error);
+                        tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">خطا در دریافت داده‌ها.</td></tr>';
+                    });
+            });
+        });
+    }
+
+    function loadCategories() {
+        const activeType = document.querySelector('input[name="categoryTypeFilter"]:checked').value;
+        const activeTime = document.querySelector('input[name="timeFilter"]:checked').value;
+
+        categoriesContainer.innerHTML = `
+            <div class="col-12 text-center text-muted py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">در حال بارگذاری داده‌ها...</p>
+            </div>
+        `;
+
+        const url = `${categoriesDataUrl}?type=${activeType}&time=${activeTime}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                categoriesContainer.innerHTML = '';
+
+                if (data.categories && data.categories.length > 0) {
+                    data.categories.forEach(category => {
+                        categoriesContainer.innerHTML += renderCategoryCard(category);
+                    });
+
+                    attachTransactionViewListeners(activeTime);
+
+                } else {
+                    categoriesContainer.innerHTML = `
+                        <div class="col-12 text-center text-muted py-5">
+                            دسته‌بندی‌ای برای فیلترهای انتخاب شده یافت نشد.
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error);
+                categoriesContainer.innerHTML = `
+                    <div class="col-12 text-center text-danger py-5">
+                        خطا در برقراری ارتباط با سرور.
+                    </div>
+                `;
+            });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCategories();
+
+        const addCategoryForm = document.getElementById('addCategoryForm');
+
+        if(addCategoryForm) {
+            addCategoryForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const form = e.target;
+                const formData = new FormData(form);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        modal.hide();
+
+                        Swal.fire({
+                            title: 'موفقیت! 🎉',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'تایید',
+                            customClass: {
+                                confirmButton: 'btn btn-success'
+                            },
+                            buttonsStyling: false
+                        });
+
+                        loadCategories();
+                    } else {
+                        Swal.fire({
+                            title: 'خطا! ❌',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'تایید',
+                            customClass: {
+                                confirmButton: 'btn btn-danger'
+                            },
+                            buttonsStyling: false
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding category:', error);
+                    Swal.fire({
+                        title: 'خطای سرور ⚠️',
+                        text: 'خطا در برقراری ارتباط با سرور. لطفا اتصال خود را بررسی کنید.',
+                        icon: 'warning',
+                        confirmButtonText: 'تایید',
+                        customClass: {
+                            confirmButton: 'btn btn-warning'
+                        },
+                        buttonsStyling: false
+                    });
+                });
+            });
+        }
+
+        const addCategoryModalElement = document.getElementById('addCategoryModal');
+        if (addCategoryModalElement && addCategoryForm) {
+            addCategoryModalElement.addEventListener('hidden.bs.modal', function () {
+                addCategoryForm.reset();
+            });
+        }
+
+        typeFilters.forEach(filter => {
+            filter.addEventListener('change', loadCategories);
+        });
+        timeFilters.forEach(filter => {
+            filter.addEventListener('change', loadCategories);
+        });
+    });
+</script>
+{% endblock page_js %}
