@@ -1,0 +1,602 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}کارت های بانکی | گردو{% endblock title %}
+
+{% block loc %}{% endblock loc %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/css/cards-page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+  <br>
+  <div class="row mb-4">
+    <div class="col-12 d-flex justify-content-start">
+        <a href="#" class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCardModal">
+            <i class="tf-icons bx bx-plus me-1"></i>
+            افزودن کارت جدید
+        </a>
+    </div>
+  </div>
+  <br>
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-start">
+            <div class="btn-group" role="group" aria-label="فیلتر کارت‌ها">
+                <a href="{% url 'cards' %}?status=active"
+                   class="btn {% if status == 'active' or not status %}btn-success{% else %}btn-outline-success{% endif %}"
+                   id="filter-active">
+                    کارت‌های فعال
+                </a>
+                <a href="{% url 'cards' %}?status=inactive"
+                   class="btn {% if status == 'inactive' %}btn-danger{% else %}btn-outline-danger{% endif %}"
+                   id="filter-inactive">
+                    کارت‌های غیرفعال
+                </a>
+            </div>
+        </div>
+    </div>
+    <br>
+  <div class="row" style="margin-top: 10px;">
+        {% for card in cards %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card card-bank text-white shadow-lg mb-1 {% if status != 'active' %}grayscale{% endif %}" style="background-color: {{ card.color }};">
+
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <h6 class="bank-logo-text primary-font text-white fw-bold">
+                            {{ card.get_name_display }}
+                        </h6>
+
+                        <img src="{% static 'assets/img/logos/' %}{{ card.name }}-logo.svg"
+                             onerror="this.onerror=null; this.src='{% static 'assets/img/logos/default-logo.svg' %}';"
+                             alt="{{ card.name }}"
+                             class="bank-logo-img">
+                    </div>
+
+                    <div class="card-number-wrapper mb-3 mt-4">
+                        <h4 class="card-title text-white font-monospace text-center fw-bold">
+                            {{ card.number | format_card_number }}
+                        </h4>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-end pt-3">
+                        <div class="account-details">
+                            <small class="text-uppercase d-block mb-1">صاحب حساب</small>
+                            <p class="mb-0 fw-bold">{{ card.owner }}</p>
+                        </div>
+                        <div class="balance-details text-end">
+                            <small class="text-uppercase d-block mb-1">موجودی (ریال)</small>
+                            <p class="mb-0 fw-bolder fs-5">{{ card.balance | format_currency }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-action-bar d-flex justify-content-end p-2 mt-0 w-100 mx-0">
+                {% if status == 'active' %}
+                <a href="#"
+                   class="delete-card-btn btn btn-sm btn-outline-danger"
+                   data-bs-toggle="modal"
+                   data-bs-target="#deactivateCardModal"
+                   data-card-id="{{ card.id }}"
+                   data-card-name="{{ card.get_name_display }}"
+                   data-card-number="{{ card.number | format_card_number_with_space }}"
+                   data-card-owner="{{ card.owner }}"
+                   title="حذف کارت">
+                    <i class="bx bx-trash me-1"></i> حذف
+                </a>
+                {% else %}
+                <a href="#"
+                   class="activate-card-btn btn btn-sm btn-outline-success"
+                   data-bs-toggle="modal"
+                   data-bs-target="#activateCardModal"
+                   data-card-id="{{ card.id }}"
+                   data-card-name="{{ card.get_name_display }}"
+                   data-card-owner="{{ card.owner }}"
+                   data-card-number="{{ card.number | format_card_number_with_space }}"
+                   title="فعال‌سازی مجدد">
+                    <i class="bx bx-refresh me-1"></i> فعال‌سازی
+                </a>
+                {% endif %}
+            </div>
+            <br>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center mt-5">
+            <h4 class="text-muted">
+                {% if status == 'active' %}
+                    شما هنوز هیچ کارت بانکی اضافه نکرده‌اید.
+                {% else %}
+                    هیچ کارت غیر فعالی وجود ندارد!
+                {% endif %}
+            </h4>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCardModalLabel">افزودن کارت بانکی جدید</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+
+            <form id="card-form">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="id_name" class="form-label required">نام بانک</label>
+                        <select class="form-select" id="id_name" name="name">
+                            <option value="">بانک را انتخاب کنید</option>
+                            {% for bank_name, display in banks %}
+                                <option value="{{ bank_name }}">{{ display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_owner" class="form-label required">نام صاحب حساب</label>
+                        <input type="text" class="form-control" id="id_owner" name="owner" placeholder="مثال: علی محمدی">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_number" class="form-label required">شماره کارت</label>
+                        <input type="text" class="form-control" id="id_number" name="number" placeholder="۱۶ رقم کارت بدون خط تیره" maxlength="19">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_balance" class="form-label required">موجودی اولیه (ریال)</label>
+                        <input type="text" class="form-control" id="id_balance" name="balance" value="0" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_color" class="form-label required">رنگ کارت</label>
+                        <select class="form-select" id="id_color" name="color">
+                            <option value="">رنگ کارت را انتخاب کنید</option>
+                            {% for value, display in colors %}
+                                <option value="{{ value }}" style="background-color: {{ value }}; color: white;">{{ display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-primary" id="submit-card-btn">ذخیره کارت</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deactivateCardModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deactivateCardModalTitle">
+                    تأیید غیرفعال‌سازی کارت
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+
+            <form id="deactivate-card-form" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="card_id" id="deactivate-card-id">
+
+                <div class="modal-body">
+                    <p class="text-danger fw-bold">هشدار: این کارت از لیست حساب های فعال شما حذف خواهد شد!</p>
+
+                    <div class="alert alert-warning p-2">
+                        <p class="mb-1">
+                            <i class="bx bx-credit-card me-1"></i>
+                            نام کارت: <span id="modal-card-name" class="fw-bold"></span>
+                        </p>
+                        <p class="mb-1">
+                            <i class="bx bx-hash me-1"></i>
+                            شماره کارت: <span id="modal-card-number" class="fw-bold font-monospace"></span>
+                        </p>
+                        <p class="mb-0">
+                            <i class="bx bx-user me-1"></i>
+                            صاحب: <span id="modal-card-owner"></span>
+                        </p>
+                    </div>
+                    <label for="confirmationText" class="form-label fw-bold mt-3">
+                        برای تأیید، عبارت <small class="fw-bold text-danger">"با حذف کارت موافقم"</small> را بنویسید:
+                    </label>
+
+                    <input type="text"
+                           id="confirmationText"
+                           class="form-control"
+                           placeholder="با حذف کارت موافقم"
+                           autocomplete="off">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        انصراف
+                    </button>
+                    <button type="submit"
+                            id="confirmDeactivateBtn"
+                            class="btn btn-danger"
+                            disabled>
+                        <i class="bx bx-trash me-1"></i>
+                        حذف کارت
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="activateCardModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="activateCardModalTitle">
+                    تأیید فعال‌سازی کارت
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+
+            <form id="activate-card-form" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="card_id" id="activate-card-id">
+
+                <div class="modal-body">
+                    <p class="text-warning fw-bold">هشدار: این کارت به لیست حساب های فعال شما باز خواهد گشت!</p>
+
+                    <div class="alert alert-success p-2">
+                        <p class="mb-1">
+                            <i class="bx bx-credit-card me-1"></i>
+                            نام کارت: <span id="modal-activate-card-name" class="fw-bold"></span>
+                        </p>
+                        <p class="mb-1">
+                            <i class="bx bx-hash me-1"></i>
+                            شماره کارت: <span id="modal-activate-card-number" class="fw-bold font-monospace"></span>
+                        </p>
+                        <p class="mb-0">
+                            <i class="bx bx-user me-1"></i>
+                            صاحب: <span id="modal-activate-card-owner"></span>
+                        </p>
+                    </div>
+
+                    <label for="confirmationActivateText" class="form-label fw-bold mt-3">
+                        برای تأیید، عبارت <small class="fw-bold text-success">"با فعال سازی کارت موافقم"</small> را بنویسید:
+                    </label>
+
+                    <input type="text"
+                           id="confirmationActivateText"
+                           class="form-control"
+                           placeholder="با فعال سازی کارت موافقم"
+                           autocomplete="off">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        انصراف
+                    </button>
+                    <button type="submit"
+                            id="confirmActivateBtn"
+                            class="btn btn-success"
+                            disabled>
+                        <i class="bx bx-refresh me-1"></i>
+                        فعال‌سازی کارت
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalElement = document.getElementById('addCardModal');
+        const form = document.getElementById('card-form');
+        const cardNumberInput = document.getElementById('id_number');
+        const balanceInput = document.getElementById('id_balance');
+        const addCardModal = new bootstrap.Modal(modalElement);
+        const addUrl = "{% url 'add_card' %}";
+
+        const deactivateModalElement = document.getElementById('deactivateCardModal');
+        const confirmationInput = document.getElementById('confirmationText');
+        const confirmButton = document.getElementById('confirmDeactivateBtn');
+        const deactivateForm = document.getElementById('deactivate-card-form');
+        const requiredText = "با حذف کارت موافقم";
+        const deactivateUrl = "{% url 'deactivate_card' %}";
+
+        const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        function formatNumber(n) {
+            n = String(n).replace(/,/g, '');
+            const isNegative = n.startsWith('-');
+            if (isNegative) { n = n.substring(1); }
+            const parts = n.split('.');
+            let integerPart = parts[0].replace(/[^0-9]/g, '');
+            const decimalPart = parts.length > 1 ? parts[1].replace(/[^0-9]/g, '') : '';
+            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            let result = integerPart;
+            if (parts.length > 1) { result += '.' + decimalPart; }
+            return result;
+        }
+
+        function isValidPositiveNumber(cleanValue) {
+            const num = parseFloat(cleanValue);
+            const regex = /^\d+$/;
+            return !isNaN(num) && num >= 0 && regex.test(cleanValue);
+        }
+
+        function cleanAndConvertCardNumber(input) {
+            let value = input.value;
+            value = value.replace(/[-\s]/g, '');
+
+            let convertedValue = '';
+            for (let i = 0; i < value.length; i++) {
+                let char = value[i];
+                let index = englishNumbers.indexOf(char);
+                if (index !== -1) {
+                    convertedValue += persianNumbers[index];
+                } else {
+                    convertedValue += char;
+                }
+            }
+            input.value = convertedValue;
+            return convertedValue;
+        }
+
+        if (cardNumberInput) {
+             cardNumberInput.addEventListener('blur', function() {
+                cleanAndConvertCardNumber(this);
+            });
+        }
+
+        if (balanceInput) {
+            balanceInput.addEventListener('input', function(e) {
+                this.value = formatNumber(this.value);
+            });
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            cleanAndConvertCardNumber(cardNumberInput);
+            const cleanBalance = balanceInput.value.replace(/,/g, '');
+
+            if (!isValidPositiveNumber(cleanBalance)) {
+                Swal.fire('خطا', 'موجودی اولیه باید یک عدد صحیح مثبت یا صفر باشد.', 'error');
+                return;
+            }
+
+            const persianToEnglish = str => str.replace(/[۰-۹]/g, d => '0123456789'[persianNumbers.indexOf(d)]);
+            const finalNumber = persianToEnglish(cardNumberInput.value).replace(/[^0-9]/g, '');
+
+            const requestBody = new URLSearchParams({
+                'csrfmiddlewaretoken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                'name': document.getElementById('id_name').value,
+                'owner': document.getElementById('id_owner').value,
+                'number': finalNumber,
+                'balance': cleanBalance,
+                'color': document.getElementById('id_color').value,
+            });
+
+            fetch(addUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: requestBody
+            })
+            .then(response => response.json())
+            .then(data => {
+                 if (data.success) {
+                    addCardModal.hide();
+                    Swal.fire({
+                        title: 'موفقیت',
+                        text: 'کارت جدید با موفقیت ثبت شد.',
+                        icon: 'success',
+                        confirmButtonText: 'باشه'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    let errorMessages = '';
+                    if (data.errors) {
+                        for (const key in data.errors) {
+                            data.errors[key].forEach(message => {
+                                errorMessages += `<p class="mb-1">${message}</p>`;
+                            });
+                        }
+                        if(errorMessages) {
+                            errorMessages = `<div>${errorMessages}</div>`;
+                        }
+
+                    } else if (data.message) {
+                        errorMessages = data.message;
+                    } else {
+                        errorMessages = 'خطایی در ثبت اطلاعات رخ داده است.';
+                    }
+
+                    Swal.fire({
+                        title: 'خطا',
+                        icon: 'error',
+                        html: errorMessages,
+                        confirmButtonText: 'باشه'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire('خطا', 'خطای ارتباط با سرور یا شبکه. لطفاً مطمئن شوید سرور پاسخ JSON معتبر برگردانده است.', 'error');
+            });
+        });
+
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            form.reset();
+        });
+
+        deactivateModalElement.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const cardId = button.getAttribute('data-card-id');
+            const cardName = button.getAttribute('data-card-name');
+            const cardOwner = button.getAttribute('data-card-owner');
+            const cardNumber = button.getAttribute('data-card-number');
+
+            document.getElementById('deactivate-card-id').value = cardId;
+            document.getElementById('modal-card-name').textContent = cardName;
+            document.getElementById('modal-card-owner').textContent = cardOwner;
+            document.getElementById('modal-card-number').textContent = cardNumber;
+
+            confirmationInput.value = '';
+            confirmButton.disabled = true;
+        });
+
+        confirmationInput.addEventListener('input', function() {
+            const isMatch = this.value.trim() === requiredText;
+            confirmButton.disabled = !isMatch;
+        });
+
+        deactivateForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (confirmationInput.value.trim() !== requiredText) {
+                Swal.fire('خطا', 'لطفاً متن تأیید را به درستی وارد کنید.', 'error');
+                return;
+            }
+
+            const requestBody = new URLSearchParams({
+                'csrfmiddlewaretoken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                'card_id': document.getElementById('deactivate-card-id').value,
+            });
+
+            fetch(deactivateUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: requestBody
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const modalInstance = bootstrap.Modal.getInstance(deactivateModalElement);
+                    modalInstance.hide();
+
+                    Swal.fire({
+                        title: 'موفقیت',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'باشه'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('خطا', data.message || 'خطای سرور ناشناخته.', 'error');
+                }
+            })
+            .catch(error => {
+                Swal.fire('خطا', 'خطای ارتباط با سرور یا شبکه.', 'error');
+            });
+        });
+
+        deactivateModalElement.addEventListener('hidden.bs.modal', function () {
+            confirmationInput.value = '';
+            confirmButton.disabled = true;
+        });
+
+        const activateModalElement = document.getElementById('activateCardModal');
+        const confirmationActivateInput = document.getElementById('confirmationActivateText');
+        const confirmActivateButton = document.getElementById('confirmActivateBtn');
+        const activateForm = document.getElementById('activate-card-form');
+        const requiredActivateText = "با فعال سازی کارت موافقم";
+        const activateUrl = "{% url 'activate_card' %}";
+
+        if (activateModalElement) {
+            activateModalElement.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const cardId = button.getAttribute('data-card-id');
+                const cardName = button.getAttribute('data-card-name');
+                const cardOwner = button.getAttribute('data-card-owner');
+                const cardNumber = button.getAttribute('data-card-number');
+
+                document.getElementById('activate-card-id').value = cardId;
+                document.getElementById('modal-activate-card-name').textContent = cardName;
+                document.getElementById('modal-activate-card-owner').textContent = cardOwner;
+                document.getElementById('modal-activate-card-number').textContent = cardNumber;
+
+                confirmationActivateInput.value = '';
+                confirmActivateButton.disabled = true;
+            });
+        }
+
+        if (confirmationActivateInput) {
+            confirmationActivateInput.addEventListener('input', function() {
+                const isMatch = this.value.trim() === requiredActivateText;
+                confirmActivateButton.disabled = !isMatch;
+            });
+        }
+
+        if (activateForm) {
+            activateForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (confirmationActivateInput.value.trim() !== requiredActivateText) {
+                    Swal.fire('خطا', 'لطفاً متن تأیید را به درستی وارد کنید.', 'error');
+                    return;
+                }
+
+                const requestBody = new URLSearchParams({
+                    'csrfmiddlewaretoken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                    'card_id': document.getElementById('activate-card-id').value,
+                });
+
+                fetch(activateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: requestBody
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const modalInstance = bootstrap.Modal.getInstance(activateModalElement);
+                        modalInstance.hide();
+
+                        Swal.fire({
+                            title: 'موفقیت',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'باشه'
+                        }).then(() => {
+                            window.location.href = "{% url 'cards' %}?status=active";
+                        });
+                    } else {
+                        Swal.fire('خطا', data.message || 'خطای سرور ناشناخته.', 'error');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('خطا', 'خطای ارتباط با سرور یا شبکه.', 'error');
+                });
+            });
+        }
+
+        if (activateModalElement) {
+            activateModalElement.addEventListener('hidden.bs.modal', function () {
+                confirmationActivateInput.value = '';
+                confirmActivateButton.disabled = true;
+            });
+        }
+    });
+</script>
+{% endblock %}
