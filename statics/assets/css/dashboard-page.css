@@ -1,0 +1,48 @@
+.fixed-card-height {
+    height: 403px;
+    display: flex;
+    flex-direction: column;
+}
+
+.scrollable-card-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 0 !important;
+}
+
+.compact-footer {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+.fixed-single-card {
+    height: 231px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fixed-scroll-content {
+    height: 376px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.fixed-scroll-content-empty {
+    height: 312px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.fixed-gold-card {
+    height: 404px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fixed-year-card {
+    height: 323px;
+    display: flex;
+    flex-direction: column;
+}

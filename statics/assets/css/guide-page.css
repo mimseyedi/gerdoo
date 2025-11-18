@@ -1,0 +1,80 @@
+:root {
+  --primary-color: #007bff;
+  --success-color: #28a745;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.reporting-bg {
+    background-color: #e4efd6 !important;
+    color: #28a745;
+}
+
+.backup-bg {
+    background-color: #f1e9f6 !important;
+    color: #6340A1;
+}
+
+.tags-bg {
+    background-color: #f1e4df !important;
+    color: #ab814f;
+}
+
+.page-guide-btn {
+    color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+    background-color: transparent !important;
+    border-radius: 0.4rem !important;
+}
+
+.page-guide-btn:hover {
+    color: white !important;
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.page-guide-btn.active {
+    color: white !important;
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+.start-guide-btn {
+    color: var(--success-color) !important;
+    border: 1px solid var(--success-color) !important;
+    background-color: transparent !important;
+    border-radius: 0.4rem !important;
+}
+
+.start-guide-btn:hover {
+    color: white !important;
+    background-color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+}
+
+.start-guide-btn.active {
+    color: white !important;
+    background-color: var(--success-color) !important;
+    border: 1px solid var(--success-color) !important;
+}
+
+.launcher-guide-btn {
+    color: var(--bs-danger) !important;
+    border: 1px solid var(--bs-danger) !important;
+    background-color: transparent !important;
+    border-radius: 0.4rem !important;
+}
+
+.launcher-guide-btn:hover {
+    color: white !important;
+    background-color: var(--bs-danger) !important;
+    border-color: var(--bs-danger) !important;
+}
+
+.launcher-guide-btn.active {
+    color: white !important;
+    background-color: var(--bs-danger) !important;
+    border: 1px solid var(--bs-danger) !important;
+}

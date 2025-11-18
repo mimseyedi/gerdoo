@@ -1,0 +1,60 @@
+.dashboard-link:hover {
+    color: var(--bs-primary) !important;*/
+    transition: color 0.3s ease;
+}
+
+.transactions-link:hover {
+    color: var(--bs-danger) !important;*/
+    transition: color 0.3s ease;
+}
+
+.categories-link:hover {
+    color: var(--bs-info) !important;*/
+    transition: color 0.3s ease;
+}
+
+.tags-link:hover {
+    color: #ab814f !important;*/
+    transition: color 0.3s ease;
+}
+
+.cards-link:hover {
+    color: var(--bs-success) !important;*/
+    transition: color 0.3s ease;
+}
+
+.gold-link:hover {
+    color: var(--bs-warning) !important;*/
+    transition: color 0.3s ease;
+}
+
+.reporting-link:hover {
+    color: #28a745 !important;*/
+    transition: color 0.3s ease;
+}
+
+.backup-link:hover {
+    color: #6340A1 !important;*/
+    transition: color 0.3s ease;
+}
+
+.guide-link:hover {
+    color: var(--bs-primary) !important;*/
+    transition: color 0.3s ease;
+}
+
+.tags-active {
+    color: #ab814f !important;
+}
+
+.reporting-active {
+    color: #28a745 !important;
+}
+
+.backup-active {
+    color: #6340A1 !important;
+}
+
+.exit:hover {
+    color: var(--bs-danger) !important;
+}
