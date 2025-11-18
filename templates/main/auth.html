@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ورود | گردو{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/vendor/css/pages/page-auth.css' %}">
+{% endblock page_css %}
+
+{% block menu %}{% endblock menu %}
+{% block loc %}{% endblock loc %}
+
+{% block content %}
+<div class="container-xxl">
+  <div class="authentication-wrapper authentication-basic container-p-y">
+    <div class="authentication-inner py-4">
+      <div class="card">
+        <div class="card-body">
+          <!-- Logo -->
+          <div class="app-brand justify-content-center">
+            <a href="{% url 'login' %}" class="app-brand-link gap-2">
+              <span class="app-brand-logo demo">
+                <img src="{% static 'assets/img/favicon/gerdoo-logo.svg' %}" alt="gerdoo-logo" style="height: 35px; width: auto;" />
+              </span>
+              <span class="app-brand-text demo h3 mb-0 fw-bold">گردو</span>
+            </a>
+          </div>
+          <!-- /Logo -->
+
+          <form id="formAuthentication" class="mb-3" action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="username" class="form-label">نام کاربری</label>
+              <input type="text" class="form-control text-start" id="username" name="username" placeholder="نام کاربری خود را وارد کنید" autofocus dir="ltr">
+            </div>
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                <label class="form-label" for="password">رمز عبور</label>
+              </div>
+              <div class="input-group input-group-merge">
+                <input type="password" id="password" class="form-control text-start" name="password" placeholder="رمز عبور خود را وارد کنید" aria-describedby="password" dir="ltr">
+                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+              </div>
+            </div>
+            <br>
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100" type="submit">ورود</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block page_js %}
+<script src="{% static 'assets/js/pages-auth.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+        const errorMessage = "{{ login_error | escapejs }}";
+
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا در ورود!',
+                text: errorMessage,
+                confirmButtonText: 'باشه',
+                customClass: {
+                    confirmButton: 'btn btn-primary'
+                },
+                buttonsStyling: false,
+                allowOutsideClick: false,
+            });
+        }
+    });
+</script>
+{% endblock page_js %}
