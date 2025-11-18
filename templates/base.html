@@ -1,0 +1,196 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" class="light-style customizer-hide" dir="rtl" data-theme="theme-default" data-assets-path="{% static 'assets/' %}" data-template="horizontal-menu-template-no-customizer">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <title>{% block title %} گردو {% endblock title %}</title>
+
+    <meta name="description" content="">
+
+    <link rel="icon" type="image/svg+xml" href="{% static 'assets/img/favicon/gerdoo-logo.svg' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/libs/sweetalert2/sweetalert2.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/fonts/boxicons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/fonts/fontawesome.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/css/rtl/core.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/css/rtl/theme-default.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/css/rtl/rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/libs/typeahead-js/typeahead.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/libs/formvalidation/dist/css/formValidation.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/base-page.css' %}">
+
+    {% block page_css %}{% endblock page_css %}
+
+    <script src="{% static 'assets/vendor/js/helpers.js' %}"></script>
+    <script src="{% static 'assets/js/config.js' %}"></script>
+  </head>
+
+  <body>
+    <div class="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+      <div class="layout-container">
+
+        {% block menu %}
+        <!-- Navbar -->
+        <nav class="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
+          <div class="container-xxl">
+            <div class="navbar-brand app-brand demo d-none d-xl-flex py-0 me-4">
+              <a href="{% url 'dashboard' %}" class="app-brand-link gap-2">
+                <span class="app-brand-logo demo">
+                  <img src="{% static 'assets/img/favicon/gerdoo-logo.svg' %}" alt="gerdoo-logo" style="height: 35px; width: auto;" />
+                </span>
+                <span class="app-brand-text demo menu-text fw-bold">گردو</span>
+              </a>
+
+              <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-xl-none">
+                <i class="bx bx-x bx-sm align-middle"></i>
+              </a>
+            </div>
+
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+              </a>
+            </div>
+
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <!-- Exit -->
+                <li class="nav-item me-2 me-xl-0">
+                  <a class="nav-item nav-link exit" href="{% url 'logout' %}" title="خروج">
+                    <i class="bx bx-power-off bx-sm"></i>
+                  </a>
+                </li>
+                <!-- /Exit -->
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <!-- / Navbar -->
+
+        <!-- Menu -->
+        <aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0">
+          <div class="container-xxl d-flex h-100">
+            <ul class="menu-inner">
+
+              <!-- Dashboard -->
+              {% url 'dashboard' as dashboard_url %}
+              <li class="menu-item">
+                <a href="{{ dashboard_url }}" class="menu-link dashboard-link {% if request.path == dashboard_url %}active{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                  <div>داشبورد</div>
+                </a>
+              </li>
+
+              <!-- Transactions -->
+              {% url 'transactions' as transactions_url %}
+              <li class="menu-item">
+                <a href="{{ transactions_url }}" class="menu-link transactions-link {% if request.path == transactions_url %}active text-danger{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-dollar"></i>
+                  <div>تراکنش‌ها</div>
+                </a>
+              </li>
+
+              <!-- Categories -->
+              {% url 'categories' as categories_url %}
+              <li class="menu-item">
+                <a href="{{ categories_url }}" class="menu-link categories-link {% if request.path == categories_url %}active text-info{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-category"></i>
+                  <div>دسته بندی‌‌ها</div>
+                </a>
+              </li>
+
+              <!-- Tags -->
+              {% url 'tags' as tags_url %}
+              <li class="menu-item">
+                <a href="{{ tags_url }}" class="menu-link tags-link {% if request.path == tags_url %}active tags-active{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-hash"></i>
+                    <div>تگ‌ها</div>
+                </a>
+              </li>
+
+              <!-- Cards -->
+              {% url 'cards' as cards_url %}
+              <li class="menu-item">
+                <a href="{{ cards_url }}" class="menu-link cards-link {% if request.path == cards_url %}active text-success{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                    <div>کارت‌های بانکی</div>
+                </a>
+              </li>
+
+              <!-- Gold -->
+              {% url 'gold' as gold_url %}
+              <li class="menu-item">
+                <a href="{{ gold_url }}" class="menu-link gold-link {% if request.path == gold_url %}active text-warning{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-coin"></i>
+                    <div>سرمایه‌گذاری طلا</div>
+                </a>
+              </li>
+
+              <!-- Reporting -->
+              {% url 'reporting' as reporting_url %}
+              <li class="menu-item">
+                <a href="{{ reporting_url }}" class="menu-link reporting-link {% if request.path == reporting_url %}active reporting-active{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-bar-chart"></i>
+                    <div>گزارش‌گیری</div>
+                </a>
+              </li>
+
+              <!-- Backup -->
+              {% url 'backup' as backup_url %}
+              <li class="menu-item">
+                <a href="{{ backup_url }}" class="menu-link backup-link {% if request.path == backup_url %}active backup-active{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-data"></i>
+                    <div>پشتیبان‌گیری</div>
+                </a>
+              </li>
+
+              <!-- Guide -->
+              {% url 'guide' as guide_url %}
+              <li class="menu-item">
+                <a href="{{ guide_url }}" class="menu-link guide-link {% if request.path == guide_url %}active{% endif %}">
+                  <i class="menu-icon tf-icons bx bx-info-circle"></i>
+                    <div>راهنما</div>
+                </a>
+              </li>
+
+            </ul>
+          </div>
+        </aside>
+        {% endblock menu %}
+
+        <div class="layout-page">
+          <div class="content-wrapper">
+            {% block loc %}
+            <div class="container-xxl container-p-y">
+              <h4 class="py-3 breadcrumb-wrapper mb-4"></h4>
+            {% endblock loc %}
+
+            {% block content %}{% endblock content %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'assets/vendor/libs/jquery/jquery.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/sweetalert2/sweetalert2.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/popper/popper.js' %}"></script>
+    <script src="{% static 'assets/vendor/js/bootstrap.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/hammer/hammer.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/i18n/i18n.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/typeahead-js/typeahead.js' %}"></script>
+    <script src="{% static 'assets/vendor/js/menu.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/select2/select2.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/cleavejs/cleave.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/cleavejs/cleave-phone.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/bs-stepper/bs-stepper.js' %}"></script>
+
+    {% block page_js %}{% endblock page_js %}
+  </body>
+</html>
