@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}سرمایه‌گذاری طلا | گردو{% endblock title %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">سرمایه‌گذاری طلا</h4>
+
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGoldModal">
+                <i class="bx bx-plus me-1"></i> افزودن طلا
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div class="d-flex justify-content-start mb-4">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary gold-filter-btn" data-filter="all">همه</button>
+                    <button type="button" class="btn btn-outline-primary gold-filter-btn" data-filter="available">موجود</button>
+                    <button type="button" class="btn btn-outline-primary gold-filter-btn" data-filter="sold">فروخته شده</button>
+                </div>
+            </div>
+
+            {% if golds %}
+            <div class="table-responsive">
+                <table class="table" id="goldTable">
+                    <thead>
+                        <tr>
+                            <th>تاریخ خرید</th>
+                            <th>وزن (سوت)</th>
+                            <th>مبلغ خرید (ریال)</th>
+                            <th>مبلغ فروش (ریال)</th>
+                            <th>سود (ریال)</th>
+                            <th>وضعیت</th>
+                            <th>توضیحات</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {% for record in golds %}
+                            <tr data-status="{% if record.is_sold %}sold{% else %}available{% endif %}" data-id="{{ record.id }}">
+                                <td>{{ record.date | jalali_date }}</td>
+                                <td>{{ record.weight | format_currency }}</td>
+                                {% if record.price == 0 %}
+                                    <td>هدیه</td>
+                                {% else %}
+                                    <td>{{ record.price | format_currency }}</td>
+                                {% endif %}
+                                <td>{{ record.p_price | format_currency }}</td>
+                                <td>
+                                    {% if record.profit %}
+                                        {% if record.profit >= 0 %}
+                                            <span class="text-success">{{ record.profit | format_currency }} ({{ record.profit_percentage }}%)</span>
+                                        {% else %}
+                                            <span class="text-danger">{{ record.profit | times:-1 | format_currency }}- ({{ record.profit_percentage | times:-1 }}%-)</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-secondary"><em>نامشخص</em></span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if record.is_sold %}
+                                        <span class="badge bg-label-danger">فروخته شده</span>
+                                    {% else %}
+                                        <span class="badge bg-label-success">موجود</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ record.description | default:"---" }}</td>
+                                <td>
+                                    {% if not record.is_sold %}
+                                        <button type="button" class="btn btn-sm btn-warning btn-sell-gold" data-id="{{ record.id }}" data-weight="{{ record.weight | floatformat:0 }}" data-price="{{ record.price | default_if_none:0 | format_currency }}">فروش</button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-sm btn-secondary btn-sell-gold" disabled>فروش</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <h5 class="text-center text-muted">هنوز هیچ رکوردی ثبت نشده است!</h5>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addGoldModal" tabindex="-1" aria-labelledby="addGoldModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addGoldModalLabel">افزودن خرید طلا</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <form id="addGoldForm">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="goldWeight" class="form-label">وزن طلا (سوت)</label>
+                        <input type="text" class="form-control" id="goldWeight" name="weight" placeholder="مثال: 700" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="goldActionType" class="form-label">نوع خرید</label>
+                        <select class="form-select" id="goldActionType" name="action_type" required>
+                            <option value="buy">خرید</option>
+                            <option value="gift">هدیه (دریافت رایگان)</option>
+                        </select>
+                    </div>
+
+                    <div id="purchase-fields">
+                        <div class="mb-3">
+                            <label for="goldPrice" class="form-label">مبلغ خرید (ریال)</label>
+                            <input type="text" class="form-control" id="goldPrice" name="price" placeholder="مثال: 7,500,000" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="sourceCard" class="form-label">حساب مبدأ (کسر مبلغ)</label>
+                            <select class="form-select" id="sourceCard" name="source_card" required>
+                                <option value="">انتخاب کنید</option>
+                                {% for card in cards %}
+                                    <option value="{{ card.id }}">{{ card.get_name_display }} ({{ card.owner }}) - {{ card.number | format_card_number_last4 }} ({{ card.balance | format_currency | format_persian_numbers }} ریال)</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="goldDescription" class="form-label">توضیحات (اختیاری)</label>
+                        <textarea class="form-control" id="goldDescription" name="description"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-primary">ثبت خرید</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sellGoldModal" tabindex="-1" aria-labelledby="sellGoldModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sellGoldModalLabel">فروش طلا</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <form id="sellGoldForm">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <div class="mb-3" id="sellGoldWeight">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="sellingPrice" class="form-label">مبلغ فروش (ریال)</label>
+                        <input type="text" class="form-control" id="sellingPrice" name="selling_price" placeholder="مثال: ۷,۵۰۰,۰۰۰" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="destinationCardSell" class="form-label">حساب مقصد (واریز مبلغ)</label>
+                        <select class="form-select" id="destinationCardSell" name="destination_card" required>
+                            <option value="">انتخاب کنید</option>
+                            {% for card in cards %}
+                                <option value="{{ card.id }}">{{ card.get_name_display }} ({{ card.owner }}) - {{ card.number | format_card_number_last4 }} ({{ card.balance | format_currency | format_persian_numbers }} ریال)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-warning">تأیید فروش</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block page_js %}
+<script>
+    function togglePurchaseFields(goldActionType, purchaseFields, goldPriceInput, sourceCardSelect) {
+        if (!goldActionType || !purchaseFields || !goldPriceInput || !sourceCardSelect) return;
+        const isBuying = goldActionType.value === 'buy';
+        if (isBuying) {
+            purchaseFields.style.display = 'block';
+            goldPriceInput.required = true;
+            sourceCardSelect.required = true;
+        } else {
+            purchaseFields.style.display = 'none';
+            goldPriceInput.required = false;
+            sourceCardSelect.required = false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const addModal = new bootstrap.Modal(document.getElementById('addGoldModal'));
+        const sellModal = new bootstrap.Modal(document.getElementById('sellGoldModal'));
+        let currentGoldId = null;
+
+        function formatNumber(n) {
+            n = String(n).replace(/,/g, '');
+
+            const parts = n.split('.');
+            let integerPart = parts[0].replace(/[^0-9-]/g, '');
+            const decimalPart = parts.length > 1 ? parts[1].replace(/[^0-9]/g, '') : '';
+
+            const isNegative = integerPart.startsWith('-');
+            if (isNegative) {
+                integerPart = integerPart.substring(1);
+            }
+
+            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+            let result = (isNegative ? '-' : '') + integerPart;
+            if (parts.length > 1) {
+                result += '.' + decimalPart;
+            }
+            return result;
+        }
+
+        function isValidPositiveNumber(cleanValue) {
+            const num = parseFloat(cleanValue);
+            return !isNaN(num) && num > 0;
+        }
+
+        const goldWeightInput = document.getElementById('goldWeight');
+        const goldPriceInput = document.getElementById('goldPrice');
+        const sellingPriceInput = document.getElementById('sellingPrice');
+
+        if (goldWeightInput) {
+            goldWeightInput.addEventListener('input', function(e) { this.value = formatNumber(this.value); });
+        }
+        if (goldPriceInput) {
+            goldPriceInput.addEventListener('input', function(e) { this.value = formatNumber(this.value); });
+        }
+        if (sellingPriceInput) {
+            sellingPriceInput.addEventListener('input', function(e) { this.value = formatNumber(this.value); });
+        }
+
+        const goldActionType = document.getElementById('goldActionType');
+        const purchaseFields = document.getElementById('purchase-fields');
+        const sourceCardSelect = document.getElementById('sourceCard');
+
+        const callToggle = () => {
+            togglePurchaseFields(goldActionType, purchaseFields, goldPriceInput, sourceCardSelect);
+        };
+
+
+        if (goldActionType) {
+            callToggle();
+        }
+
+        if (goldActionType) {
+            goldActionType.addEventListener('change', callToggle);
+        }
+
+        document.querySelectorAll('.btn-sell-gold').forEach(button => {
+            button.addEventListener('click', function() {
+                currentGoldId = this.getAttribute('data-id');
+                const weight = this.getAttribute('data-weight');
+                const price = this.getAttribute('data-price');
+
+                document.getElementById('sellGoldWeight').innerHTML = `
+                    <p class="mb-1 text-danger">وزن طلا: <b>${weight}</b> سوت</p>
+                    <p class="mb-3 text-muted">قیمت خرید: <b>${price}</b> ریال</p>
+                `;
+
+                sellModal.show();
+            });
+        });
+
+        const addGoldModalElement = document.getElementById('addGoldModal');
+        const addGoldFormElement = document.getElementById('addGoldForm');
+        const sellGoldModalElement = document.getElementById('sellGoldModal');
+        const sellGoldFormElement = document.getElementById('sellGoldForm');
+        const sellGoldWeightDisplay = document.getElementById('sellGoldWeight');
+
+        if (addGoldModalElement) {
+            addGoldModalElement.addEventListener('hidden.bs.modal', function () {
+                if (addGoldFormElement) {
+                    addGoldFormElement.reset();
+                    callToggle();
+                }
+            });
+
+            addGoldModalElement.addEventListener('shown.bs.modal', function () {
+                 callToggle();
+            });
+        }
+
+        if (sellGoldModalElement) {
+            sellGoldModalElement.addEventListener('hidden.bs.modal', function () {
+                if (sellGoldFormElement) {
+                    sellGoldFormElement.reset();
+                }
+                if (sellGoldWeightDisplay) {
+                    sellGoldWeightDisplay.innerHTML = `
+                        <p class="mb-3 text-danger">وزن طلا: --- سوت</p>
+                        <p class="mb-3 text-muted">قیمت خرید: --- ریال</p>
+                    `;
+                }
+                currentGoldId = null;
+            });
+        }
+
+        const goldTableBody = document.querySelector('#goldTable tbody');
+        const filterButtons = document.querySelectorAll('.gold-filter-btn');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline-primary');
+                });
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-primary');
+
+                const filterValue = this.getAttribute('data-filter');
+
+                const rows = goldTableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    const status = row.getAttribute('data-status');
+
+                    if (filterValue === 'all' || status === filterValue) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        if (addGoldFormElement) {
+            addGoldFormElement.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const addUrl = "{% url 'add_gold' %}";
+                const weightInput = document.getElementById('goldWeight');
+
+                const actionType = document.getElementById('goldActionType').value;
+                const isBuying = actionType === 'buy';
+
+                const priceInput = document.getElementById('goldPrice');
+                const sourceCard = document.getElementById('sourceCard').value;
+                const description = document.getElementById('goldDescription').value;
+
+
+                const cleanWeight = weightInput.value.replace(/,/g, '');
+                let cleanPrice = priceInput.value.replace(/,/g, '');
+
+                if (isBuying) {
+                     if (!isValidPositiveNumber(cleanPrice)) {
+                        Swal.fire('خطا', 'در حالت خرید، لطفاً مبلغ را به صورت عدد مثبت وارد کنید.', 'error');
+                        return;
+                     }
+                     if (!sourceCard) {
+                        Swal.fire('خطا', 'در حالت خرید، لطفاً حساب مبدأ را انتخاب کنید.', 'error');
+                        return;
+                     }
+                } else {
+                    cleanPrice = '0';
+                }
+
+                if (!isValidPositiveNumber(cleanWeight)) {
+                    Swal.fire('خطا', 'لطفاً وزن طلا را به صورت عدد مثبت وارد کنید.', 'error');
+                    return;
+                }
+
+                fetch(addUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'action_type': actionType,
+                        'weight': cleanWeight,
+                        'price': cleanPrice,
+                        'source_card': isBuying ? sourceCard : '',
+                        'description': description,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'موفقیت',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'باشه'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire('خطا', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('خطا', 'خطای ارتباط با سرور.', 'error');
+                });
+            });
+        }
+
+        if (sellGoldFormElement) {
+            sellGoldFormElement.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const sellingPriceInput = document.getElementById('sellingPrice');
+                const sellingPrice = sellingPriceInput.value.replace(/,/g, '');
+                const destinationCard = document.getElementById('destinationCardSell').value;
+                const sellUrl = "{% url 'sell_gold' %}";
+
+                if (!isValidPositiveNumber(sellingPrice)) {
+                    Swal.fire('خطا', 'لطفاً مبلغ فروش را به صورت عدد مثبت وارد کنید.', 'error');
+                    return;
+                }
+
+                if (!currentGoldId || !destinationCard) {
+                    Swal.fire('خطا', 'لطفاً حساب مقصد را انتخاب کنید.', 'error');
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'آیا مطمئن هستید؟',
+                    text: `شما در حال ثبت فروش رکورد به مبلغ ${formatNumber(sellingPrice)} ریال هستید.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'بله، بفروش!',
+                    cancelButtonText: 'انصراف'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(sellUrl, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({
+                                'gold_id': currentGoldId,
+                                'destination_card': destinationCard,
+                                'selling_price': sellingPrice
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'موفقیت',
+                                    text: data.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'باشه'
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('خطا', data.message, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('خطا', 'خطای ارتباط با سرور.', 'error');
+                        });
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock page_js %}
