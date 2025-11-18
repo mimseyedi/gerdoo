@@ -58,6 +58,11 @@ from .views.reporting import (
     filter_transactions_ajax,
     export_transactions_excel,
 )
+# Backup
+from .views.backup import (
+    backup,
+    create_backup,
+)
 
 
 urlpatterns = [
@@ -109,4 +114,8 @@ urlpatterns = [
     path('reporting', reporting, name='reporting'),
     path('api/reports/filter/', filter_transactions_ajax, name='filter_transactions_ajax'),
     path('api/reports/export/', export_transactions_excel, name='export_transactions_excel'),
+
+    # Backup
+    path('backup/', backup, name='backup'),
+    path('backup/create/', create_backup, name='create_backup'),
 ]
