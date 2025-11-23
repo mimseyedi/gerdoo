@@ -31,23 +31,20 @@
             </div>
         </div>
 
-        <div class="d-flex align-items-center ms-auto me-auto mb-0 mt-5">
-            <select id="month-filter-select" class="form-select form-select-sm" style="width: 160px; margin-left: 10px;" autocomplete="off">
-                {% for index, name in MONTHS_NAME.items %}
-                    <option value="{{ index }}" {% if index == current_month_index %}selected{% endif %}>
-                        {{ name }} / {{ current_year | format_persian_numbers }}
-                    </option>
+        <div class="d-flex align-items-center ms-auto me-auto mb-0 mt-5" style="visibility: hidden;"></div>
+
+        <div class="d-flex align-items-center me-2 mb-0 mt-5">
+            <h5 class="text-secondary">
+                {% for k, v in MONTHS_NAME.items %}
+                {% if k == current_month_index %}
+                    {{v}} / {{ current_year }}
+                {% endif %}
                 {% endfor %}
-            </select>
-            <button id="apply-month-filter-btn" class="btn btn-primary btn-sm waves-effect waves-light fs-6">
-                <i class='bx bx-filter me-1'></i> اعمال فیلتر
-            </button>
+            </h5>
         </div>
 
-        <div style="width: 250px;"></div>
-
     </div>
-        <div class="p-4 table-responsive">
+        <div class="p-4 table-responsive" id="transactions-container">
             {% if transactions %}
             <table class="datatables-basic table dt-column-search table border-top dataTable" id="transactions-table" style="width:100%">
                 <thead>
@@ -319,7 +316,6 @@
       let allAvailableTags = [];
 
       function numberToWordsFA(num) {
-          // (تابع numberToWordsFA شما در اینجا قرار می‌گیرد)
           const units = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
           const tens = ["", "ده", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
           const teens = ["ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
@@ -682,7 +678,6 @@
           });
       }
 
-      // توابع Tag Picker
       function loadAvailableTags() {
           $.ajax({
               url: getAllTagsUrl,
@@ -727,7 +722,7 @@
 
           if (selectedIds.length === 0) {
               if ($selectedBox.find('.text-muted').length === 0) {
-                   $selectedBox.html('<span class="text-muted small">تگ‌های انتخاب شده در اینجا نمایش داده می‌شوند...</span>');
+                   $selectedBox.html('<span class="text-muted small">تگ‌های انتخاب شده در اینجا نمایش داده می‌شوند ... </span>');
               }
           }
 
@@ -825,7 +820,7 @@
           $('#amountInWordsLabel').addClass('d-none').text('');
 
           $('#availableTagsContainer').empty();
-          $('#selectedTagsBox').html('<span class="text-muted small">تگ‌های انتخاب شده در اینجا نمایش داده می‌شوند...</span>');
+          $('#selectedTagsBox').html('<span class="text-muted small">تگ‌های انتخاب شده در اینجا نمایش داده می‌شوند ... </span>');
           $('#transactionTagsHidden').val('');
       });
 
@@ -900,16 +895,6 @@
 
       $('#transactions-table tbody').off('click', '.delete-transaction-btn').on('click', '.delete-transaction-btn', function() {
           transactionToDeleteId = $(this).data('transaction-id');
-
-          //Swal.fire({
-              //title: 'در حال دریافت جزئیات...',
-              //icon: 'info',
-              //allowOutsideClick: false,
-              //showConfirmButton: false,
-              //didOpen: () => {
-                  //Swal.showLoading();
-              //}
-          //});
 
           $.ajax({
               type: 'GET',
