@@ -19,3 +19,5 @@ Cargo.lock linguist-vendored
 *.gif linguist-binary
 *.zip linguist-binary
 *.rar linguist-binary
+
+*.php linguist-language=PHP
