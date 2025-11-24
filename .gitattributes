@@ -1,2 +1,4 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+/launcher/target/ linguist-vendored
+Cargo.lock linguist-vendored
+/app/statics/assets/vendor/** linguist-vendored
+*.md linguist-documentation
