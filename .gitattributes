@@ -2,4 +2,4 @@
 Cargo.lock linguist-vendored
 /app/statics/assets/vendor/** linguist-vendored
 *.md linguist-documentation
-/app/**/*.html linguist-language=HTML
+/app/**/*.html linguist-documentation
