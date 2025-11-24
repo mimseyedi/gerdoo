@@ -20,4 +20,7 @@ Cargo.lock linguist-vendored
 *.zip linguist-binary
 *.rar linguist-binary
 
-*.php linguist-language=PHP
+*.html linguist-documentation
+*.css linguist-documentation
+*.js linguist-documentation
+*.php linguist-documentation
