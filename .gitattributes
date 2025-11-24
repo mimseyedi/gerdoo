@@ -1,25 +1,7 @@
 /launcher/target/ linguist-vendored
 Cargo.lock linguist-vendored
 
-/app/statics/assets/vendor/** linguist-vendored
-
 *.md linguist-documentation
-
-*.ttf linguist-binary
-*.otf linguist-binary
-*.woff linguist-binary
-*.woff2 linguist-binary
-*.eot linguist-binary
-*.svg linguist-binary
-
-*.ico linguist-binary
-*.jpg linguist-binary
-*.jpeg linguist-binary
-*.png linguist-binary
-*.gif linguist-binary
-*.zip linguist-binary
-*.rar linguist-binary
-
 *.html linguist-documentation
 *.css linguist-documentation
 *.js linguist-documentation
