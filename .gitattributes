@@ -1,5 +1,5 @@
 /launcher/target/ linguist-vendored
 Cargo.lock linguist-vendored
-/app/statics/assets/vendor/** linguist-vendored
+/app/statics/assets/vendor/** linguist-documentation
 *.md linguist-documentation
 /app/**/*.html linguist-documentation
