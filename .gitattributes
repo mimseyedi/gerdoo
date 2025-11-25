@@ -6,3 +6,4 @@ Cargo.lock linguist-vendored
 *.css linguist-documentation
 *.js linguist-documentation
 *.php linguist-documentation
+*.json linguist-documentation
