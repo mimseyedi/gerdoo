@@ -1,3 +1,5 @@
+use opener;
+use std::time::Duration;
 use chrono::{
     Local,
 };
@@ -20,6 +22,7 @@ use std::sync::{
     Arc,
     Mutex,
 };
+use tokio::time;
 use tokio::sync::mpsc::{
     self,
     Sender,
@@ -61,7 +64,7 @@ impl LauncherApp {
 
         Self {
             config: Arc::new(Mutex::new(initial_config)),
-            console_output: "- Launcher is ready -\n".to_owned(),
+            console_output: "".to_owned(),
             status_message: "Launcher is ready.\n".to_owned(),
             tx,
             rx,
@@ -80,6 +83,7 @@ pub async fn run_gui(initial_config: AppConfig) -> eframe::Result<()> {
         .with_resizable(false);
 
     let options = eframe::NativeOptions {
+        centered: true,
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([600.0, 450.0])
             .with_resizable(false)
@@ -100,9 +104,9 @@ impl App for LauncherApp {
         while let Ok(message) = self.rx.try_recv() {
             let timestamp = Local::now().format("%H:%M:%S").to_string();
             let formatted_line = match message {
-                ConsoleMessage::System(msg) => format!("[{}] [SYS] {}\n", timestamp, msg),
-                ConsoleMessage::Stdout(msg) => format!("[{}] [OUT] {}\n", timestamp, msg),
-                ConsoleMessage::Stderr(msg) => format!("[{}] [ERR] {}\n", timestamp, msg),
+                ConsoleMessage::System(msg) => format!("{}\n", msg),
+                ConsoleMessage::Stdout(msg) => format!("{}\n", msg),
+                ConsoleMessage::Stderr(msg) => format!("{}\n", msg),
             };
 
             self.console_output.push_str(&formatted_line);
@@ -113,18 +117,15 @@ impl App for LauncherApp {
             let mut config_lock = self.config.lock().unwrap();
             let is_running = config_lock.server_pid.is_some();
 
-            ui.heading("Gerdoo Launcher");
-            ui.separator();
-
             ui.horizontal(|ui| {
                 ui.spacing_mut().item_spacing.x = 10.0;
 
                 let start_button = ui.add_enabled_ui(!is_running, |ui| {
-                    ui.button(RichText::new("▶️ Start Server").strong().size(18.0))
+                    ui.button(RichText::new("▶ Start Server").strong().size(18.0))
                 }).inner;
 
                 let stop_button = ui.add_enabled_ui(is_running, |ui| {
-                    ui.button(RichText::new("⏹️ Stop Server").strong().size(18.0).color(Color32::RED))
+                    ui.button(RichText::new("◼ Stop Server").strong().size(18.0).color(Color32::RED))
                 }).inner;
 
                 if start_button.clicked() {
@@ -132,11 +133,17 @@ impl App for LauncherApp {
                     let tx_clone = self.tx.clone();
                     let config_arc_clone = self.config.clone();
 
+                    let server_url = "http://127.0.0.1:8000";
+
                     tokio::spawn(async move {
                         let mut current_config_clone = config_arc_clone.lock().unwrap().clone();
                         let result = crate::server::start_server(&mut current_config_clone, tx_clone).await;
 
                         if result.is_ok() {
+                            time::sleep(Duration::from_secs(2)).await;
+                            if let Err(e) = opener::open_browser(server_url) {
+                                eprintln!("Failed to open browser: {}", e);
+                            }
                             let _ = current_config_clone.save();
                             let mut main_config_lock = config_arc_clone.lock().unwrap();
                             *main_config_lock = current_config_clone;
@@ -162,15 +169,19 @@ impl App for LauncherApp {
                 }
             });
 
-            ui.add_space(8.0);
-            ui.label(RichText::new(&self.status_message).small().italics());
+            ui.add_space(12.0);
+            ui.label(RichText::new(&self.status_message).italics());
             ui.separator();
 
-            ui.label("Server Log:");
+            ui.label("Server Logs:");
+
+            let available_size = ui.available_size();
+            let available_height = available_size.y;
 
             ScrollArea::vertical().max_height(f32::INFINITY).show(ui, |ui| {
                 ui.add(
                     egui::TextEdit::multiline(&mut self.console_output)
+                        .min_size(egui::vec2(available_size.x, available_height))
                         .font(TextStyle::Monospace)
                         .desired_width(f32::INFINITY)
                         .interactive(false)
@@ -181,7 +192,6 @@ impl App for LauncherApp {
                     self.scroll_to_bottom = false;
                 }
             });
-
             ctx.request_repaint();
         });
     }
