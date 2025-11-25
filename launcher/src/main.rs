@@ -4,18 +4,18 @@ mod server;
 mod config;
 mod update;
 
-
+use egui::Key::A;
 use config::{
-    LauncherConfig,
+    AppConfig,
 };
 
 
 #[tokio::main]
 async fn main() -> eframe::Result<()> {
-    let cfg = LauncherConfig::load()
+    let cfg = AppConfig::load()
         .unwrap_or_else( |e| {
             eprintln!("Error: {}", e);
-            LauncherConfig::default()
+            AppConfig::default()
         });
     gui::run_gui(cfg).await
 }
