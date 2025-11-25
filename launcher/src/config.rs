@@ -1,3 +1,4 @@
+use dirs;
 use std::path::{
     PathBuf,
 };
@@ -16,14 +17,14 @@ use serde::{
     Serialize,
     Deserialize,
 )]
-pub struct LauncherConfig {
+pub struct AppConfig {
     pub server_pid: Option<u32>,
     pub current_version: String,
     pub app_path: PathBuf,
 }
 
 
-impl LauncherConfig {
+impl AppConfig {
     const QUA: &'static str = "app";
     const ORG: &'static str = "Gerdoo";
     const APP: &'static str = "Launcher";
@@ -67,12 +68,21 @@ impl LauncherConfig {
 }
 
 
-impl Default for LauncherConfig {
+impl Default for AppConfig {
     fn default() -> Self {
+        let gerdoo_path = get_gerdoo_app_path();
         Self {
             server_pid: None,
             current_version: "0.0.0".to_owned(),
-            app_path: PathBuf::from("./gerdoo"),
+            app_path: PathBuf::from(gerdoo_path),
         }
     }
+}
+
+
+fn get_gerdoo_app_path() -> PathBuf {
+    let mut home_dir = dirs::home_dir().unwrap();
+    home_dir.push("gerdoo");
+    home_dir.push("app");
+    home_dir
 }
