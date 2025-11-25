@@ -1,10 +1,13 @@
 use dirs;
+use std::fs;
 use std::path::{
+    Path,
     PathBuf,
 };
 use directories::{
     ProjectDirs,
 };
+use serde_json;
 use serde::{
     Deserialize,
     Serialize,
@@ -70,13 +73,44 @@ impl AppConfig {
 
 impl Default for AppConfig {
     fn default() -> Self {
-        let gerdoo_path = get_gerdoo_app_path();
         Self {
             server_pid: None,
-            current_version: "0.0.0".to_owned(),
-            app_path: PathBuf::from(gerdoo_path),
+            current_version: first_version().to_owned(),
+            app_path: PathBuf::from(get_gerdoo_app_path()),
         }
     }
+}
+
+
+fn first_version() -> String {
+    let fallback_version = "0.1.0".to_owned();
+
+    let mut manifest = get_gerdoo_app_path();
+    manifest.push("update_manifest.json");
+    if !Path::new(&manifest).exists() {
+        return fallback_version;
+    }
+
+    let content = match fs::read_to_string(&manifest) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("{}", e);
+            return fallback_version;
+        }
+    };
+
+    let value: serde_json::Value = match serde_json::from_str(&content) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("{}", e);
+            return fallback_version;
+        }
+    };
+
+    if let Some(version_str) = value["version"].as_str() {
+        return version_str.to_owned();
+    }
+    fallback_version
 }
 
 
